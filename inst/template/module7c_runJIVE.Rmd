@@ -101,7 +101,9 @@ jive.data.rownames<-list()
 jive.data<-list() 
 for (f in 1:2){#f=1 mean; f=2 sd
 d0<-read.csv(inFN[f], header = TRUE,stringsAsFactors=FALSE) 
-if (length(sleepQCremove)>=1) d0<-d0[!which(d0[,1] %in% sleepQCremove),]
+sleepQCremove.i<- which(d0[,1] %in% sleepQCremove) 
+if (length(sleepQCremove.i)>=1) d0<-d0[-sleepQCremove.i,]
+
 
 ncat<-NULL
 for (j in 1:ncol(d0)) ncat[j]<-length(table(d0[,j],useNA="no"))

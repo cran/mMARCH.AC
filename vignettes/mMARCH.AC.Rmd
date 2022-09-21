@@ -158,7 +158,7 @@ use.cluster = FALSE
 log.multiplier = 9250
 QCdays.alpha = 7
 QChours.alpha = 16 
-QCnights.feature.alpha = c(0,0)
+QCnights.feature.alpha = c(0,0,0,0)
 DoubleHour= "average" 
 QC.sleepdur.avg=NULL
 QC.nblocks.sleep.avg=NULL
@@ -708,11 +708,14 @@ R -e "rmarkdown::render('mMARCH.AC.Rmd'   )"
    +  O'Connell M.J., Lock E.F. (2016). R.JIVE for exploration of multi-source molecular data. Bioinformatics, 32(18), 2877-2879.
 
 # Websites  
-   +  mMARCH.AC download: https://CRAN.R-project.org 
 
-   +  mMARCH.AC vignette: https://github.com/WeiGuoNIMH/mMARCH.AC
+   +  mMARCH.AC download: https://cran.r-project.org/package=mMARCH.AC  
+
+   +  mMARCH.AC vignette: https://cran.r-project.org/package=mMARCH.AC
 
    +  Example data and documents: https://github.com/WeiGuoNIMH/mMARCH.AC
  
 Please contact wei.guo3@nih.gov to ask questions.
+
+ 
  

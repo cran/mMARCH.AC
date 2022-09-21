@@ -1,4 +1,4 @@
- 
+options(width=2000) 
 argv = commandArgs(TRUE);  
 print(argv) 
 print(paste("length=",length(argv),sep=""))  

@@ -17,10 +17,10 @@ mMARCH.AC.maincall(
   use.cluster = TRUE,
   QCdays.alpha = 7,
   QChours.alpha = 16,
-  QCnights.feature.alpha = c(0, 0),
+  QCnights.feature.alpha = c(0, 0, 0, 0),
   DoubleHour = c("average", "earlier", "later")[1],
   QC.sleepdur.avg = c(3, 12),
-  QC.nblocks.sleep.avg = c(5, 30),
+  QC.nblocks.sleep.avg = c(6, 29),
   Rversion = "R",
   filename2id = NULL,
   PA.threshold = c(50, 100, 400),
@@ -63,7 +63,7 @@ mMARCH.AC.maincall(
 
 \item{QC.sleepdur.avg}{\code{number}  As taking the deault value of QC.sleepdur.avg=c(3,12), individuals were excluded with an average sleep duration <3 hour or >12 hour.}
 
-\item{QC.nblocks.sleep.avg}{\code{number}  As taking the deault value of QC.nblocks.sleep.avg=c(5,30), individuals were excluded with an average number of nocturnal sleep episodes <5 or >30.}
+\item{QC.nblocks.sleep.avg}{\code{number}  As taking the deault value of QC.nblocks.sleep.avg=c(6,29), individuals were excluded with an average number of nocturnal sleep episodes < 6 or > 29.}
 
 \item{Rversion}{\code{character}  R version, eg. "R/3.6.3". Default is "R".}
 

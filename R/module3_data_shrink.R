@@ -14,7 +14,6 @@
 #' @param useIDs.FN \code{character} Filename with or without directory for sample information in CSV format, which inclues "filename" and "duplicate" in the headlines at least. If duplicate="remove",  the accelerometer files will not be used in the data analysis of module 5-7. Defaut is NULL, which makes all accelerometer files will be used in module 5-7.
 #' @param RemoveDaySleeper  \code{logical}  Specify if the daysleeper nights are removed from the calculation of number of valid days for each subject. Default is FALSE. 
 #' @param trace  \code{logical}  Specify if the intermediate results is printed when the function was executed. Default is FALSE. 
-#' @param Step  \code{number}  Specify which of the varaible need to be cleaned. For example, Step = 1 for the "anglez" variable, and Step = 2 for the "enmo" variable. 
 #'
 #' @import  xlsx  
 #'  
@@ -61,14 +60,15 @@
 # part2 summary match the activity data. So we can use part2 in QC.
 #########################################################################  
 
-DataShrink<-function(studyname,outputdir,workdir,QCdays.alpha=7,QChours.alpha=16,summaryFN="../summary/part24daysummary.info.csv",epochIn=5,epochOut=60,useIDs.FN=NULL,RemoveDaySleeper=FALSE,trace=FALSE,Step=1){
+DataShrink<-function(studyname,outputdir,workdir,QCdays.alpha=7,QChours.alpha=16,summaryFN="../summary/part24daysummary.info.csv",epochIn=5,epochOut=60,useIDs.FN=NULL,RemoveDaySleeper=FALSE,trace=FALSE ){
 
 # remove daysleepers
 # remove lines by <16 hours,<7 days (no =)
 # keep samples >=7days (each day>=16 hours)
 # useIDs.FN is the csv file name including "duplicate" column, remove ids="remove"
 # f0=1 ageleZ; f0=1 for enmo
-f0<-Step
+# 9/13/22 step=0, ANGLEX, ANGLEY,ANGLEZ,BFEN,ENMO,MAD,ZCX,ZCY,ZCZ
+ 
 olddir<-getwd()
 
 setwd(workdir)
@@ -94,7 +94,10 @@ nonwear[,"filename"]<-filename2
 nonwear[,"NonWearMin"]<-15*nonwear[,"RowNonWear"]
 
 
-key<-c("ANGLEZ", "ENMO")   
+inputfiles<-list.files(pattern = "^All_*") 
+if (length(inputfiles)==0) stop("No input files such as All_studyname_ENMO.data.csv")
+key<-unlist(lapply(inputfiles,function(x) gsub(".data.csv","",unlist(strsplit(x,"\\_"))[3]))) 
+#key<-c("ANGLEZ", "ENMO")   
 inFN <-paste("All_",studyname,"_",key,".data.csv",sep="") 
 outFN1<-paste("flag_","All_",studyname,"_",key,".data.",epochIn,"s.csv",sep="")  
 outFN2<-paste("flag_","All_",studyname,"_",key,".data.",epochOut,"s.csv",sep="")  
@@ -129,7 +132,7 @@ message(table(part2ds.nw0[,"daysleeper"]))
 
 
 # create Nvalid.day for final imputation...........................
-for (f in f0:f0){
+for (f in 1:length(inFN)){
  
 d<-read.csv(inFN[f],header=1, comment.char = "#",stringsAsFactors=F) 
 S0<-which(d[,"filename"]=="# filename") 
@@ -139,7 +142,7 @@ if (trace) message(d[1,1]) # skip the # lines in All*csv files.
 filename2 <- gsub(pattern= ".RData.csv", replacement = "" ,x= d[,"filename"])    
 d[,"filename"]<-filename2
 
-message(paste(f,": read ",ifelse(f==1,"AngleZ","ENMO")," data and prepare headCol",sep=""))
+message(paste(f,": read ",key[f]," data and prepare headCol",sep=""))
 # ------- prepare head info --------
 # 16hours7days removing:
 

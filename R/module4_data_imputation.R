@@ -7,7 +7,7 @@
 #'
 #'  
 #' @param workdir  \code{character} Directory where the output needs to be stored. Note that this directory must exist. 
-#' @param csvInput \code{character} File name with or without directory for sample information in CSV format. The ENMO data will be read through read.csv(csvInput,header=1) command, and the missing values were imputated by the average ENMO over all the valid days for each subject at each time point. In this package, csvInput =  flag_All_studyname_ENMO.data.Xs.csv. 
+#' @param csvInput \code{character} File name with or without directory for sample information in CSV format. The ENMO data will be read through read.csv(csvInput,header=1) command, and the missing values were imputated by the average ENMO over all the valid days for each subject at each time point. In this package, csvInput =  flag_All_studyname_ENMO.data.Xs.csv.  If csvInput=NULL, all available data from module 3 will be imputed.
 #'
 #' @import xlsx  
 #'  
@@ -50,18 +50,34 @@
 # workdir<-"/gpfs/gsfs3/users/guow4/projectX1_2018/NCCR_geneActiv/GGIR/afterGGIRxx/data"
 # csvInput<-"flag_All_NCCR_ENMO.data.5s.csv"
 
-data.imputation<-function(workdir, csvInput ){ 
+data.imputation<-function(workdir, csvInput=NULL ){ 
  
 # use only "remove16h7day" ==1 lines in imputation and leave other lines same without impu.
 olddir<-getwd()
 
 setwd(workdir)
 on.exit(setwd(workdir)) 
+
+if (is.null(csvInput)){ 
+
+csvInput <-list.files(pattern = "^flag_All_*") 
+if (length(csvInput )==0) stop("No input files such as flag_All_studyname_ENMO.data.csv")  
+epoch<-unlist(lapply(csvInput,function(x) gsub("s","",unlist(strsplit(x,"\\."))[3]))) 
+epoch<-max(as.numeric(epoch))
+csvInput<-csvInput[grep(epoch,csvInput)]  
+} 
+key<-unlist(lapply(csvInput,function(x) gsub(".data.csv","",unlist(strsplit(x,"\\_"))[4])))  
+key<-unlist(lapply(key,function(x) gsub(".data.csv","",unlist(strsplit(x,"\\."))[1])))  
+
 outFN<-paste("impu.",csvInput,sep="")
 outFN2<-paste("IDMatrix.",csvInput,sep="")
 
-Data.trans<-read.csv(csvInput,header=1, stringsAsFactors=F)  
-message(paste(c("input=",dim(Data.trans)),collapse=" " ))
+
+for (f in 1:length(csvInput)){
+
+message(paste(f," : data imputation for ",key[f]," data and write to ",outFN[f],"-----------------", sep="")) 
+Data.trans<-read.csv(csvInput[f],header=1, stringsAsFactors=F)  
+message(paste(c("input=",dim(Data.trans)),collapse=" " )) 
 
 Ctop<-which(colnames(Data.trans)=="X00.00.00")-1   
 Data.trans.imp<-Data.trans[,-(1:Ctop)]   # without top columns, only minutes
@@ -72,7 +88,7 @@ message(table(ImpuMiss.b) )
 message(table(Data.trans[,"remove16h7day"]))
  
 
-Simpu<-which(idM[,"remove16h7day"]==0) 
+Simpu<-which(idM[,"remove16h7day"]==0) # good days used for imputation
 SimpuX<-which(idM[,"remove16h7day"]==0 & ImpuMiss.b>=1) # lines need to be imputed
  
 
@@ -94,12 +110,12 @@ ImpuMiss.a = rowSums(is.na(Data.trans.imp ))
 table(ImpuMiss.a) 
 
 
-message("imputation module2 ----Make KEEP variable based on 4 items----------------") 
+message("second step to Make KEEP variable based on 4 items.") 
 KEEP<-rep("keep",nrow(idM))
 KEEP[which(is.na(idM[,"newID"]) | idM[,"remove16h7day"]==1 | idM[,"duplicate"]=="remove" |  ImpuMiss.a>=1 )]<-"remove" 
 
 idM.print<-cbind(idM,ImpuMiss.b,ImpuMiss.a,KEEP)
-write.csv(idM.print,file=outFN2 ,row.names=F)
+if (key[f]=="ENMO") write.csv(idM.print,file=outFN2[f] ,row.names=F)
 idM.print[SimpuX,19:ncol(idM.print)] 
 idM.print[-SimpuX,19:ncol(idM.print)] 
 
@@ -108,8 +124,8 @@ Data.trans.imp<-cbind(idM.print,Data.trans.imp)
 dim(Data.trans)
 dim(Data.trans.imp)
 head(Data.trans.imp[,1:10]) 
-write.csv(Data.trans.imp,file=outFN ,row.names=F)
- 
+write.csv(Data.trans.imp,file=outFN[f] ,row.names=F)
+} # fth input 
 setwd(olddir) 
 on.exit(setwd(olddir)) 
 

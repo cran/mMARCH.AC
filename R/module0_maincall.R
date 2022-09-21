@@ -18,7 +18,7 @@
 #' @param QCnights.feature.alpha  \code{number}  Minimum required number of valid nights in day specific mean, SD, weekday mean and weekend mean analysis as a quality control step in the JIVE analysis. Default is  c(0,0,0,0), i.e. no additional data cleaning in this step.   
 #' @param DoubleHour  \code{character}  Specify the method of processing the double hours for days that daylight saving time starts and ends for example. In detail, DoubleHour = c("average","earlier","later"). The acceleration data was averaged on double hours when DoulbeHour="average". Only the acceleration data in the earlier occurrence was remained for double hours while the other duplicate data were ignored when DoulbeHour="earlier". Only the acceleration data in the later occurrence was remained for double hours while the other duplicate data were ignored when DoulbeHour="later".  Default is "average". 
 #' @param QC.sleepdur.avg \code{number}  As taking the deault value of QC.sleepdur.avg=c(3,12), individuals were excluded with an average sleep duration <3 hour or >12 hour.  
-#' @param QC.nblocks.sleep.avg \code{number}  As taking the deault value of QC.nblocks.sleep.avg=c(5,30), individuals were excluded with an average number of nocturnal sleep episodes <5 or >30.  
+#' @param QC.nblocks.sleep.avg \code{number}  As taking the deault value of QC.nblocks.sleep.avg=c(6,29), individuals were excluded with an average number of nocturnal sleep episodes < 6 or > 29.  
 #' @param Rversion \code{character}  R version, eg. "R/3.6.3". Default is "R". 
 #' @param filename2id  \code{R function}  User defined function for converting filename to sample IDs. Default is NULL.  
 #' @param PA.threshold  \code{number}  Threshold for light, moderate and vigorous physical activity. Default is c(50,100,400).
@@ -52,7 +52,10 @@
 
 
 
-mMARCH.AC.maincall<-function(mode,useIDs.FN=NULL,currentdir,studyname,bindir=NULL, outputdir, epochIn=5, epochOut=60,log.multiplier=9250,use.cluster=TRUE,QCdays.alpha=7,QChours.alpha=16,QCnights.feature.alpha=c(0,0),  DoubleHour=c("average","earlier","later")[1], QC.sleepdur.avg=c(3,12),QC.nblocks.sleep.avg=c(5,30), Rversion="R", filename2id=NULL, PA.threshold=c(50,100,400), desiredtz="US/Eastern", RemoveDaySleeper=FALSE, part5FN="WW_L50M100V400_T5A5", NfileEachBundle=20, holidayFN=NULL,trace=FALSE){
+mMARCH.AC.maincall<-function(mode,useIDs.FN=NULL,currentdir,studyname,bindir=NULL, outputdir, epochIn=5, epochOut=60,log.multiplier=9250,use.cluster=TRUE,QCdays.alpha=7,QChours.alpha=16,QCnights.feature.alpha=c(0,0,0,0),  DoubleHour=c("average","earlier","later")[1], QC.sleepdur.avg=c(3,12),QC.nblocks.sleep.avg=c(6,29), Rversion="R", filename2id=NULL, PA.threshold=c(50,100,400), desiredtz="US/Eastern", RemoveDaySleeper=FALSE, part5FN="WW_L50M100V400_T5A5", NfileEachBundle=20, holidayFN=NULL,trace=FALSE){
+
+
+# note for sleep clean: Jones et al cleaned sleep data based on Nblocks of sleep and durations of sleep by removing sleep features for individuals with an average sleep duration <3 h or >12 h or with an average number of nocturnal sleep episodes =5 or =30.  Apply to JIVE (part 7c) after subject-avg feature were calculated.
 
 message(paste("mode=",mode,sep="")) 
 message(paste("useIDs.FN=",useIDs.FN,sep="")) 
@@ -82,8 +85,12 @@ Vnames<-toupper(colnames(read.csv(csvdata[1],header=1,nrow=10))[-1])
 ######################################################################### 
 # (0) check input files 
 ######################################################################### 
-if (mode>=1){
-message("0: Check input files for module1, module2 and module7................")
+if (mode<=2){
+message("")
+message("To run mMARCH.AC, you need input some GGIR outputs for module1, module2 and module7................")
+if (nf==0) warning(paste("No files were found in GGIR foldes: ",outputdir,"/meta/basic",sep=""))
+if (length(csvdata)==0) warning(paste("No csv files were found in GGIR foldes: ",outputdir,"/meta/csv",sep=""))
+
 p1.files<-paste(outputdir,c("/meta/basic", "/meta/csv"),sep="") 
 p2.files<-c(paste(outputdir,"/results/", c( "part2_daysummary", "part4_nightsummary_sleep_cleaned",
           paste("part5_daysummary" ,"_",part5FN,sep="")),".csv",sep=""),   
@@ -188,13 +195,11 @@ call.after.plot(studyname,outputdir,workdir= paste(currentdir,"/",writedir,sep="
 #  output= flag_All_studyname_ENMO.data.Xs.csv 
 ######################################################################### 
 if (3 %in% mode ){  
-message("# (3a) data clean for ANGLEZ---------------------------")
+message("# (3) data clean for ENMO,ANGLEZ, etc ---------------------------")
  
 summaryFN<-paste(currentdir,"/summary/part24daysummary.info.csv",sep="")
-DataShrink(studyname,outputdir,workdir= paste(currentdir,"/",writedir,sep=""),QCdays.alpha=QCdays.alpha,QChours.alpha=QChours.alpha,summaryFN,epochIn=epochIn,epochOut=epochOut,useIDs.FN=useIDs.FN, RemoveDaySleeper=RemoveDaySleeper,trace=trace,Step=1 )
-
-message("# (3b) data clean for ENMO---------------------------")
-DataShrink(studyname,outputdir,workdir= paste(currentdir,"/",writedir,sep=""),QCdays.alpha=QCdays.alpha,QChours.alpha=QChours.alpha,summaryFN,epochIn=epochIn,epochOut=epochOut,useIDs.FN=useIDs.FN,RemoveDaySleeper=RemoveDaySleeper,trace=trace,Step=2 )
+DataShrink(studyname,outputdir,workdir= paste(currentdir,"/",writedir,sep=""),QCdays.alpha=QCdays.alpha,QChours.alpha=QChours.alpha,summaryFN,epochIn=epochIn,epochOut=epochOut,useIDs.FN=useIDs.FN, RemoveDaySleeper=RemoveDaySleeper,trace=trace )
+ 
 }
 
 
@@ -202,8 +207,8 @@ DataShrink(studyname,outputdir,workdir= paste(currentdir,"/",writedir,sep=""),QC
 if (4 %in% mode ){   
 message("# (4) data imputation ---------------------------") 
  
-csvInput<-paste("flag_All_",studyname,"_ENMO.data.",epochOut,"s.csv",sep="") 
-data.imputation(workdir= paste(currentdir,"/",writedir,sep=""), csvInput )  
+#  csvInput<-paste("flag_All_",studyname,"_ENMO.data.",epochOut,"s.csv",sep="") 
+data.imputation(workdir= paste(currentdir,"/",writedir,sep=""), csvInput=NULL )  
 }  
  
 #########################################################################  

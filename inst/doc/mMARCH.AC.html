@@ -12,7 +12,7 @@
 
 <meta name="author" content="Wei Guo" />
 
-<meta name="date" content="2022-08-18" />
+<meta name="date" content="2022-09-21" />
 
 <title>mMARCH.AC: An Open-Source R/R-Markdown Package for Processing of Accelerometry Data with GGIR in Motor Activity Research Consortium for Health (mMARCH)</title>
 
@@ -346,13 +346,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -560,7 +567,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 Package for Processing of Accelerometry Data with GGIR in Motor Activity
 Research Consortium for Health (mMARCH)</h1>
 <h4 class="author">Wei Guo</h4>
-<h4 class="date">August 18, 2022</h4>
+<h4 class="date">September 21, 2022</h4>
 
 
 
@@ -759,7 +766,7 @@ current directory, names as <em>STUDYNAME_module0.maincall.R</em>.</p>
 <span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>log.multiplier <span class="ot">=</span> <span class="dv">9250</span></span>
 <span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>QCdays.alpha <span class="ot">=</span> <span class="dv">7</span></span>
 <span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>QChours.alpha <span class="ot">=</span> <span class="dv">16</span> </span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>QCnights.feature.alpha <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>QCnights.feature.alpha <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
 <span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>DoubleHour<span class="ot">=</span> <span class="st">&quot;average&quot;</span> </span>
 <span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>QC.sleepdur.avg<span class="ot">=</span><span class="cn">NULL</span></span>
 <span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>QC.nblocks.sleep.avg<span class="ot">=</span><span class="cn">NULL</span></span>
@@ -3471,8 +3478,8 @@ multi-source molecular data. Bioinformatics, 32(18), 2877-2879.</p></li>
 <div id="websites" class="section level1">
 <h1>Websites</h1>
 <ul>
-<li><p>mMARCH.AC download: <a href="https://CRAN.R-project.org" class="uri">https://CRAN.R-project.org</a></p></li>
-<li><p>mMARCH.AC vignette: <a href="https://github.com/WeiGuoNIMH/mMARCH.AC" class="uri">https://github.com/WeiGuoNIMH/mMARCH.AC</a></p></li>
+<li><p>mMARCH.AC download: <a href="https://cran.r-project.org/package=mMARCH.AC" class="uri">https://cran.r-project.org/package=mMARCH.AC</a></p></li>
+<li><p>mMARCH.AC vignette: <a href="https://cran.r-project.org/package=mMARCH.AC" class="uri">https://cran.r-project.org/package=mMARCH.AC</a></p></li>
 <li><p>Example data and documents: <a href="https://github.com/WeiGuoNIMH/mMARCH.AC" class="uri">https://github.com/WeiGuoNIMH/mMARCH.AC</a></p></li>
 </ul>
 <p>Please contact <a href="mailto:wei.guo3@nih.gov" class="email">wei.guo3@nih.gov</a> to ask questions.</p>

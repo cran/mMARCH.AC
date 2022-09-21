@@ -44,7 +44,7 @@
 ggir.summary<-function(bindir=NULL, outputdir,studyname, numericID=FALSE,sortByid="filename",subdir="summary",part5FN="WW_L50M125V500_T5A5",QChours.alpha=16, filename2id=NULL, desiredtz="US/Eastern",trace=FALSE){
 
 olddir<-getwd()
-oldpar <- par(nor.readonly = TRUE)
+oldpar <- par(no.readonly = TRUE)
  
 if (is.null(filename2id)) {
 filename2id<-function(x) {
@@ -131,6 +131,7 @@ if (trace) message(table(temp))
  
 fn<-list() 
 for (i in 1:length(inFN3)){
+
 d<-read.csv(inFN3[i],header=1,stringsAsFactors=F)
 colnames(d)[1:10]
 fn[[i]]<-d[,"filename"]
@@ -142,7 +143,9 @@ ansM<-rbind(ansM,ans)
 temp<-rep(".",nrow(BD))
 temp[which(BD[,2] %in% set)]<-"X"
 BD<-cbind(BD,temp)
-if (trace) message(table(temp))  
+
+#print(c(i,dim(BD),length(temp)))
+#if (trace) message(table(temp))  
 if (i==1) GGIR_version<-as.character(d[1,"GGIR.version"])
 
 } 
@@ -150,7 +153,7 @@ if (i==1) GGIR_version<-as.character(d[1,"GGIR.version"])
 
 colnames(ansM)<-c(GGIR_version,"GGIR_folder","Nrow","Nid","Nmissday","Missing_files")
 # write.csv(ansM,file=outFN[1],row.names=F)
-colnames(BD)<-c("i","filename",S,inFN2) 
+colnames(BD)<-c("i","filename",S,inFN2)   # BD has 14 columns
 
 
 p2sum<-read.csv(inFN3[1],header=1,stringsAsFactors=F)[,c(4,5)] #date=2000-11-25, part2_summary

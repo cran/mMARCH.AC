@@ -258,7 +258,7 @@ timestamp2matrix<-function(Data2,target=2){ #valid only for dup happens only one
 single.data.nonwear<-function(Y,ggir.dir,filename,epochIn,epochOut,ID=filename,ifplot=TRUE){ 
 #  ID was the name used in plotting nonwear figures
  
-  oldpar <- par(nor.readonly = TRUE)
+  oldpar <- par(no.readonly = TRUE)
 
 
 

@@ -54,14 +54,23 @@ setwd(currentdir)
 
 ## Parameters
  
-#### `r paste("Calculate subject-level mean when Nvalid.night>=",QCnights.feature.alpha[1], " for each feature.",sep="")`
+**`r paste("Calculate subject-level mean when Nvalid.night>=",QCnights.feature.alpha[1], " for each feature.",sep="")`**
 
-#### `r paste("Calculate subject-level SD when Nvalid.night>=",QCnights.feature.alpha[2], " for each feature.",sep="")`
+**`r paste("Calculate subject-level SD when Nvalid.night>=",QCnights.feature.alpha[2], " for each feature.",sep="")`**
 
+**Definition of weekday and weekend**
+
+Domain  |  Weekday (WD)  | Weekend (WE)
+-----------|------------------------------|----------------------------
+PA, CL| Monday ~ Friday if not holiday | Saturday, Sunday, holiday
+SL    | Mon, Tue, Wed, Thurs, Sun if the next day is not a holiday | Fri (Friday night sleeponset +Sat moring wake up in GGIR sleep window), Sat, day before holiday
+
+Please note that Sunday night sleeponset is counted as weekday but Friday night sleeponset is counted as weekends under the current definition.
 
 
 ```{r holidayWE,include=FALSE} 
-
+# Issue: Sunday night sleeponset is counted as weekday; Friday night sleeponset is counted as weekends under current definition.
+# find "wd" and "we" days/nights with/without extra holidayFN as input (twin study)
 holidayplusweekends<-function(feature,holidayFN=NULL){ 
 
 Sho.today<-NULL

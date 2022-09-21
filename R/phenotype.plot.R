@@ -37,7 +37,7 @@
 pheno.plot<-function(inputFN,outFN=paste("plot_",inputFN,".pdf",sep=""),csv=TRUE,sep=" ",start=3,read=TRUE,logFN=NULL,track=TRUE){ 
 
 
-oldpar <- par(nor.readonly = TRUE)
+oldpar <- par(no.readonly = TRUE)
 if (is.null(logFN)) logFN<-paste(inputFN,".log",sep="")
 
 if (read){
