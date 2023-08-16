@@ -12,7 +12,7 @@
 
 <meta name="author" content="Wei Guo" />
 
-<meta name="date" content="2022-09-21" />
+<meta name="date" content="2023-08-16" />
 
 <title>mMARCH.AC: An Open-Source R/R-Markdown Package for Processing of Accelerometry Data with GGIR in Motor Activity Research Consortium for Health (mMARCH)</title>
 
@@ -567,7 +567,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 Package for Processing of Accelerometry Data with GGIR in Motor Activity
 Research Consortium for Health (mMARCH)</h1>
 <h4 class="author">Wei Guo</h4>
-<h4 class="date">September 21, 2022</h4>
+<h4 class="date">August 16, 2023</h4>
 
 
 
@@ -680,11 +680,15 @@ to study the joint and individual variation structure by JIVE.</p>
 <div id="install-r-and-rstudio" class="section level2">
 <h2>Install R and RStudio</h2>
 <p><a href="https://cran.r-project.org/">Download and install R</a></p>
-<p><a href="https://www.rstudio.com/products/rstudio">Download and
+<p><a href="https://posit.co/products/open-source/rstudio/">Download and
 install RStudio</a> (optional, but recommended)</p>
 <p>Download GGIR with its dependencies, you can do this with one command
 from the console command line:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;mMARCH.AC&quot;</span>, <span class="at">dependencies =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Alternatively, to install the latest development version with the
+latest bug fixes use instead:</p>
+<pre><code>install.packages(&quot;remotes&quot;)
+remotes::install_github(&quot;WeiGuoNIMH/mMARCH.AC&quot;)</code></pre>
 </div>
 <div id="prepare-folder-structure" class="section level2">
 <h2>Prepare folder structure</h2>
@@ -707,144 +711,144 @@ with all raw .bin files</li>
 <h1>Quick start</h1>
 <div id="create-a-template-shell-script-of-mmarch.ac" class="section level2">
 <h2>Create a template shell script of mMARCH.AC</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mMARCH.AC) </span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">create.shell</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mMARCH.AC) </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">create.shell</span>()</span></code></pre></div>
 <p>The function will create a template shell script of mMARCH.AC in the
 current directory, names as <em>STUDYNAME_module0.maincall.R</em>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> STUDYNAME_module0.maincall.R</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>argv <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="cn">TRUE</span>);  </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(argv) </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;length=&quot;</span>,<span class="fu">length</span>(argv),<span class="at">sep=</span><span class="st">&quot;&quot;</span>))  </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>mode<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(argv[<span class="dv">1</span>])  </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">c</span>(<span class="st">&quot;mode =&quot;</span>, mode))</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># (Note) Please remove the above lines if you are running this within R console </span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#        instead of submitting jobs to a cluster.</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################   </span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># (user-define 1) you need to redefine this according different study!!!!</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># example 1 </span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>filename2id<span class="fl">.1</span><span class="ot">&lt;-</span><span class="cf">function</span>(x)  <span class="fu">unlist</span>(<span class="fu">strsplit</span>(x,<span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>))[<span class="dv">1</span>] </span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  example 2 (use csv file =c(&quot;filename&quot;,&quot;ggirID&quot;)) </span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>filename2id<span class="fl">.2</span><span class="ot">&lt;-</span><span class="cf">function</span>(x) {</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  d<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">&quot;./mMARCH.AC/inst/extdata/example/filename2id.csv&quot;</span>,<span class="at">head=</span><span class="dv">1</span>,<span class="at">stringsAsFactors=</span>F)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  y1<span class="ot">&lt;-</span><span class="fu">which</span>(d[,<span class="st">&quot;filename&quot;</span>]<span class="sc">==</span>x)</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(y1)<span class="sc">==</span><span class="dv">0</span>) <span class="fu">stop</span>(<span class="fu">paste</span>(<span class="st">&quot;Missing &quot;</span>,x,<span class="st">&quot; in filename2id.csv file&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>))</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(y1)<span class="sc">&gt;=</span><span class="dv">1</span>) y2<span class="ot">&lt;-</span>d[y1[<span class="dv">1</span>],<span class="st">&quot;newID&quot;</span>] </span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.character</span>(y2))</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#  main call</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>mMARCH.AC.shell<span class="ot">&lt;-</span><span class="cf">function</span>(mode,<span class="at">filename2id=</span><span class="cn">NULL</span>){ </span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mMARCH.AC) </span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;mMARCH.AC&quot;</span>)</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#  ?mMARCH.AC.maincall  # run help to see all argumengts </span></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="co"># (user-define 2) Fill in parameters of your ggir output</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="do">########################################################################## </span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>currentdir <span class="ot">=</span> </span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>studyname <span class="ot">=</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>bindir <span class="ot">=</span> </span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>outputdir <span class="ot">=</span>  </span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(currentdir) </span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>rmDup<span class="ot">=</span><span class="cn">FALSE</span>   <span class="co"># keep all subjects in mMARCH.AC</span></span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>PA.threshold<span class="ot">=</span><span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">400</span>)</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>part5FN<span class="ot">=</span><span class="st">&quot;WW_L50M100V400_T5A5&quot;</span> </span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>epochIn <span class="ot">=</span> <span class="dv">5</span></span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>epochOut <span class="ot">=</span>  <span class="dv">60</span></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>use.cluster <span class="ot">=</span> <span class="cn">FALSE</span></span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>log.multiplier <span class="ot">=</span> <span class="dv">9250</span></span>
-<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>QCdays.alpha <span class="ot">=</span> <span class="dv">7</span></span>
-<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>QChours.alpha <span class="ot">=</span> <span class="dv">16</span> </span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>QCnights.feature.alpha <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>DoubleHour<span class="ot">=</span> <span class="st">&quot;average&quot;</span> </span>
-<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>QC.sleepdur.avg<span class="ot">=</span><span class="cn">NULL</span></span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>QC.nblocks.sleep.avg<span class="ot">=</span><span class="cn">NULL</span></span>
-<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>useIDs.FN<span class="ot">=</span><span class="cn">NULL</span> </span>
-<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>Rversion<span class="ot">=</span><span class="st">&quot;R&quot;</span> </span>
-<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>desiredtz<span class="ot">=</span><span class="st">&quot;US/Eastern&quot;</span> </span>
-<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>RemoveDaySleeper<span class="ot">=</span><span class="cn">FALSE</span>  </span>
-<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>NfileEachBundle<span class="ot">=</span><span class="dv">20</span> </span>
-<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>holidayFN<span class="ot">=</span><span class="cn">NULL</span></span>
-<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>trace<span class="ot">=</span><span class="cn">FALSE</span></span>
-<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
-<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="co">#   remove duplicate sample IDs for plotting and feature extraction </span></span>
-<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
-<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (mode<span class="sc">==</span><span class="dv">3</span> <span class="sc">&amp;</span> rmDup){</span>
-<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="co"># step 1: read ./summary/*remove_temp.csv file (output of mode=2)</span></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>keep.last<span class="ot">&lt;-</span><span class="cn">TRUE</span> <span class="co">#keep the latest visit for each sample</span></span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>sumdir<span class="ot">&lt;-</span><span class="fu">paste</span>(currentdir,<span class="st">&quot;/summary&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>)  </span>
-<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(sumdir)  </span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>inFN<span class="ot">&lt;-</span><span class="fu">paste</span>(studyname,<span class="st">&quot;_samples_remove_temp.csv&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>)</span>
-<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>useIDs.FN<span class="ot">&lt;-</span><span class="fu">paste</span>(sumdir,<span class="st">&quot;/&quot;</span>,studyname,<span class="st">&quot;_samples_remove.csv&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>) </span>
-<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
-<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="co"># (user-define 3 as rmDup=TRUE)  create useIDs.FN file</span></span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="co"># step 2: create the ./summary/*remove.csv file manually or by R commands</span></span>
-<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>d<span class="ot">&lt;-</span><span class="fu">read.csv</span>(inFN,<span class="at">head=</span><span class="dv">1</span>,<span class="at">stringsAsFactors=</span>F)</span>
-<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>d<span class="ot">&lt;-</span>d[<span class="fu">order</span>(d[,<span class="st">&quot;Date&quot;</span>]),]</span>
-<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>d<span class="ot">&lt;-</span>d[<span class="fu">order</span>(d[,<span class="st">&quot;newID&quot;</span>]),]</span>
-<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>d[<span class="fu">which</span>(<span class="fu">is.na</span>(d[,<span class="st">&quot;newID&quot;</span>])),]</span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>S<span class="ot">&lt;-</span><span class="fu">duplicated</span>(d[,<span class="st">&quot;newID&quot;</span>],<span class="at">fromLast=</span>keep.last) <span class="co">#keep the last copy for nccr</span></span>
-<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>d[S,<span class="st">&quot;duplicate&quot;</span>]<span class="ot">&lt;-</span><span class="st">&quot;remove&quot;</span></span>
-<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(d,<span class="at">file=</span>useIDs.FN,<span class="at">row.names=</span>F)</span>
-<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
-<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a><span class="co">#   call afterggir</span></span>
-<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(currentdir)  </span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a><span class="fu">mMARCH.AC.maincall</span>(<span class="at">mode=</span>mode,</span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>          <span class="at">useIDs.FN=</span>useIDs.FN,</span>
-<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>          <span class="at">currentdir=</span>currentdir,</span>
-<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>          <span class="at">studyname=</span>studyname,</span>
-<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>          <span class="at">bindir=</span>bindir,</span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>          <span class="at">outputdir=</span>outputdir,</span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>          <span class="at">epochIn=</span>epochIn,</span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>          <span class="at">epochOut=</span>epochOut, </span>
-<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>          <span class="at">log.multiplier=</span>log.multiplier,</span>
-<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>          <span class="at">use.cluster=</span>use.cluster,</span>
-<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>          <span class="at">QCdays.alpha=</span>QCdays.alpha,</span>
-<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>          <span class="at">QChours.alpha=</span>QChours.alpha,</span>
-<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>          <span class="at">QCnights.feature.alpha=</span>QCnights.feature.alpha, </span>
-<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>          <span class="at">DoubleHour=</span> DoubleHour,</span>
-<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>          <span class="at">QC.sleepdur.avg=</span>QC.sleepdur.avg,</span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>          <span class="at">QC.nblocks.sleep.avg=</span>QC.nblocks.sleep.avg,</span>
-<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>          <span class="at">Rversion=</span>Rversion,</span>
-<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>          <span class="at">filename2id=</span>filename2id,</span>
-<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>          <span class="at">PA.threshold=</span>PA.threshold,</span>
-<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>          <span class="at">desiredtz=</span>desiredtz,</span>
-<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>          <span class="at">RemoveDaySleeper=</span>RemoveDaySleeper,</span>
-<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>          <span class="at">part5FN=</span>part5FN,</span>
-<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>          <span class="at">NfileEachBundle=</span>NfileEachBundle,</span>
-<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>          <span class="at">holidayFN=</span>holidayFN,</span>
-<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>          <span class="at">trace=</span>trace) </span>
-<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>} </span>
-<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################</span></span>
-<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>         <span class="fu">mMARCH.AC.shell</span>(mode)   </span>
-<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
-<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a><span class="co">#   Note:   mMARCH.AC.shell(mode)</span></span>
-<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 0 : creat sw/Rmd file</span></span>
-<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 1 : data transform using cluster or not</span></span>
-<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 2 : summary</span></span>
-<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 3 : clean </span></span>
-<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 4 : impu</span></span>
-<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> STUDYNAME_module0.maincall.R</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>argv <span class="ot">=</span> <span class="fu">commandArgs</span>(<span class="cn">TRUE</span>);  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(argv) </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;length=&quot;</span>,<span class="fu">length</span>(argv),<span class="at">sep=</span><span class="st">&quot;&quot;</span>))  </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>mode<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(argv[<span class="dv">1</span>])  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">c</span>(<span class="st">&quot;mode =&quot;</span>, mode))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># (Note) Please remove the above lines if you are running this within R console </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#        instead of submitting jobs to a cluster.</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################   </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># (user-define 1) you need to redefine this according different study!!!!</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># example 1 </span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>filename2id<span class="fl">.1</span><span class="ot">&lt;-</span><span class="cf">function</span>(x)  <span class="fu">unlist</span>(<span class="fu">strsplit</span>(x,<span class="st">&quot;</span><span class="sc">\\</span><span class="st">.&quot;</span>))[<span class="dv">1</span>] </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  example 2 (use csv file =c(&quot;filename&quot;,&quot;ggirID&quot;)) </span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>filename2id<span class="fl">.2</span><span class="ot">&lt;-</span><span class="cf">function</span>(x) {</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  d<span class="ot">&lt;-</span><span class="fu">read.csv</span>(<span class="st">&quot;./mMARCH.AC/inst/extdata/example/filename2id.csv&quot;</span>,<span class="at">head=</span><span class="dv">1</span>,<span class="at">stringsAsFactors=</span>F)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  y1<span class="ot">&lt;-</span><span class="fu">which</span>(d[,<span class="st">&quot;filename&quot;</span>]<span class="sc">==</span>x)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(y1)<span class="sc">==</span><span class="dv">0</span>) <span class="fu">stop</span>(<span class="fu">paste</span>(<span class="st">&quot;Missing &quot;</span>,x,<span class="st">&quot; in filename2id.csv file&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>))</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(y1)<span class="sc">&gt;=</span><span class="dv">1</span>) y2<span class="ot">&lt;-</span>d[y1[<span class="dv">1</span>],<span class="st">&quot;newID&quot;</span>] </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.character</span>(y2))</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#  main call</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>mMARCH.AC.shell<span class="ot">&lt;-</span><span class="cf">function</span>(mode,<span class="at">filename2id=</span><span class="cn">NULL</span>){ </span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mMARCH.AC) </span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">&quot;mMARCH.AC&quot;</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#  ?mMARCH.AC.maincall  # run help to see all argumengts </span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co"># (user-define 2) Fill in parameters of your ggir output</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="do">########################################################################## </span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>currentdir <span class="ot">=</span> </span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>studyname <span class="ot">=</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>bindir <span class="ot">=</span> </span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>outputdir <span class="ot">=</span>  </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(currentdir) </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>rmDup<span class="ot">=</span><span class="cn">FALSE</span>   <span class="co"># keep all subjects in mMARCH.AC</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>PA.threshold<span class="ot">=</span><span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">400</span>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>part5FN<span class="ot">=</span><span class="st">&quot;WW_L50M100V400_T5A5&quot;</span> </span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>epochIn <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>epochOut <span class="ot">=</span>  <span class="dv">60</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>use.cluster <span class="ot">=</span> <span class="cn">FALSE</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>log.multiplier <span class="ot">=</span> <span class="dv">9250</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>QCdays.alpha <span class="ot">=</span> <span class="dv">7</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>QChours.alpha <span class="ot">=</span> <span class="dv">16</span> </span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>QCnights.feature.alpha <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>DoubleHour<span class="ot">=</span> <span class="st">&quot;average&quot;</span> </span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>QC.sleepdur.avg<span class="ot">=</span><span class="cn">NULL</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>QC.nblocks.sleep.avg<span class="ot">=</span><span class="cn">NULL</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>useIDs.FN<span class="ot">=</span><span class="cn">NULL</span> </span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>Rversion<span class="ot">=</span><span class="st">&quot;R&quot;</span> </span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>desiredtz<span class="ot">=</span><span class="st">&quot;US/Eastern&quot;</span> </span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>RemoveDaySleeper<span class="ot">=</span><span class="cn">FALSE</span>  </span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>NfileEachBundle<span class="ot">=</span><span class="dv">20</span> </span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>holidayFN<span class="ot">=</span><span class="cn">NULL</span></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>trace<span class="ot">=</span><span class="cn">FALSE</span></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="co">#   remove duplicate sample IDs for plotting and feature extraction </span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (mode<span class="sc">==</span><span class="dv">3</span> <span class="sc">&amp;</span> rmDup){</span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="co"># step 1: read ./summary/*remove_temp.csv file (output of mode=2)</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>keep.last<span class="ot">&lt;-</span><span class="cn">TRUE</span> <span class="co">#keep the latest visit for each sample</span></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>sumdir<span class="ot">&lt;-</span><span class="fu">paste</span>(currentdir,<span class="st">&quot;/summary&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>)  </span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(sumdir)  </span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>inFN<span class="ot">&lt;-</span><span class="fu">paste</span>(studyname,<span class="st">&quot;_samples_remove_temp.csv&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>)</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>useIDs.FN<span class="ot">&lt;-</span><span class="fu">paste</span>(sumdir,<span class="st">&quot;/&quot;</span>,studyname,<span class="st">&quot;_samples_remove.csv&quot;</span>,<span class="at">sep=</span><span class="st">&quot;&quot;</span>) </span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a><span class="co"># (user-define 3 as rmDup=TRUE)  create useIDs.FN file</span></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="co"># step 2: create the ./summary/*remove.csv file manually or by R commands</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>d<span class="ot">&lt;-</span><span class="fu">read.csv</span>(inFN,<span class="at">head=</span><span class="dv">1</span>,<span class="at">stringsAsFactors=</span>F)</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>d<span class="ot">&lt;-</span>d[<span class="fu">order</span>(d[,<span class="st">&quot;Date&quot;</span>]),]</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>d<span class="ot">&lt;-</span>d[<span class="fu">order</span>(d[,<span class="st">&quot;newID&quot;</span>]),]</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>d[<span class="fu">which</span>(<span class="fu">is.na</span>(d[,<span class="st">&quot;newID&quot;</span>])),]</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>S<span class="ot">&lt;-</span><span class="fu">duplicated</span>(d[,<span class="st">&quot;newID&quot;</span>],<span class="at">fromLast=</span>keep.last) <span class="co">#keep the last copy for nccr</span></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>d[S,<span class="st">&quot;duplicate&quot;</span>]<span class="ot">&lt;-</span><span class="st">&quot;remove&quot;</span></span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a><span class="fu">write.csv</span>(d,<span class="at">file=</span>useIDs.FN,<span class="at">row.names=</span>F)</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################  </span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a><span class="co">#   call afterggir</span></span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(currentdir)  </span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="fu">mMARCH.AC.maincall</span>(<span class="at">mode=</span>mode,</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>          <span class="at">useIDs.FN=</span>useIDs.FN,</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>          <span class="at">currentdir=</span>currentdir,</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a>          <span class="at">studyname=</span>studyname,</span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>          <span class="at">bindir=</span>bindir,</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>          <span class="at">outputdir=</span>outputdir,</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>          <span class="at">epochIn=</span>epochIn,</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>          <span class="at">epochOut=</span>epochOut, </span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>          <span class="at">log.multiplier=</span>log.multiplier,</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>          <span class="at">use.cluster=</span>use.cluster,</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>          <span class="at">QCdays.alpha=</span>QCdays.alpha,</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>          <span class="at">QChours.alpha=</span>QChours.alpha,</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>          <span class="at">QCnights.feature.alpha=</span>QCnights.feature.alpha, </span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>          <span class="at">DoubleHour=</span> DoubleHour,</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>          <span class="at">QC.sleepdur.avg=</span>QC.sleepdur.avg,</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>          <span class="at">QC.nblocks.sleep.avg=</span>QC.nblocks.sleep.avg,</span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>          <span class="at">Rversion=</span>Rversion,</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>          <span class="at">filename2id=</span>filename2id,</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a>          <span class="at">PA.threshold=</span>PA.threshold,</span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>          <span class="at">desiredtz=</span>desiredtz,</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>          <span class="at">RemoveDaySleeper=</span>RemoveDaySleeper,</span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>          <span class="at">part5FN=</span>part5FN,</span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>          <span class="at">NfileEachBundle=</span>NfileEachBundle,</span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>          <span class="at">holidayFN=</span>holidayFN,</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>          <span class="at">trace=</span>trace) </span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>} </span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="do">#########################################################################</span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>         <span class="fu">mMARCH.AC.shell</span>(mode)   </span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a><span class="do">######################################################################### </span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a><span class="co">#   Note:   mMARCH.AC.shell(mode)</span></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 0 : creat sw/Rmd file</span></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 1 : data transform using cluster or not</span></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 2 : summary</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 3 : clean </span></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a><span class="co">#        mode = 4 : impu</span></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a> </span></code></pre></div>
 </div>
 <div id="edit-shell-script" class="section level2">
 <h2>Edit shell script</h2>
@@ -1060,7 +1064,7 @@ duplicate=“remove”.</li>
 </div>
 <div id="run-r-script" class="section level2">
 <h2>Run R script</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mMARCH.AC.shell</span>(mode,filename2id)   </span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mMARCH.AC.shell</span>(mode,filename2id)   </span></code></pre></div>
 <table>
 <colgroup>
 <col width="24%" />
@@ -1095,25 +1099,25 @@ duplicate IDs.</td>
 </div>
 <div id="run-script-in-a-cluster" class="section level2">
 <h2>Run script in a cluster</h2>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#$ -cwd</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#$ -j y</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#$ -S /bin/bash</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  source <span class="sc">~</span><span class="er">/</span>.bash_profile</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  module load R ; </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">0</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">1</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">2</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">3</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">4</span> </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module5_studyname_Data_process_report.Rmd&#39;   )&quot;</span>  </span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module6_studyname_NonWear.report.Rmd&#39;   )&quot;</span> </span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7a_studyname_calculate_newfeatures.Rmd&#39;   )&quot;</span> </span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7b_studyname_merge_GGIRfeatures.Rmd&#39;   )&quot;</span> </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7c_studyname_runJIVE.Rmd&#39;   )&quot;</span> </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7d_studyname_calculate_WD_WE_avg_features.Rmd&#39;   )&quot;</span> </span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#$ -cwd</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#$ -j y</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#$ -S /bin/bash</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  source <span class="sc">~</span><span class="er">/</span>.bash_profile</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  module load R ; </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">0</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">1</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">2</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">3</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">--</span>no<span class="sc">-</span>save <span class="sc">--</span>no<span class="sc">-</span>restore <span class="sc">--</span>args  <span class="sc">&lt;</span> studyname_module0.maincall.R  <span class="dv">4</span> </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module5_studyname_Data_process_report.Rmd&#39;   )&quot;</span>  </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module6_studyname_NonWear.report.Rmd&#39;   )&quot;</span> </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7a_studyname_calculate_newfeatures.Rmd&#39;   )&quot;</span> </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7b_studyname_merge_GGIRfeatures.Rmd&#39;   )&quot;</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7c_studyname_runJIVE.Rmd&#39;   )&quot;</span> </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>     R <span class="sc">-</span>e <span class="st">&quot;rmarkdown::render(&#39;module7d_studyname_calculate_WD_WE_avg_features.Rmd&#39;   )&quot;</span> </span></code></pre></div>
 </div>
 </div>
 <div id="section-4" class="section level1">
@@ -1146,6 +1150,7 @@ mean, light peak, temperature mean, clipping score, and the Euclidian
 norm metric (EN) if available.</p>
 The activity data in the GGIR output is formatted in long
 csv-spreadsheets as follows,<br />
+
 <table>
 <tbody>
 <tr>
@@ -2551,6 +2556,231 @@ mMARCH.AC
 </tr>
 <tr>
 <td style="text-align:left;">
+sed_dur_C2
+</td>
+<td style="text-align:left;">
+Total daytime duration in minutes of sedentary activity using the second
+cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+light_dur_C2
+</td>
+<td style="text-align:left;">
+Total daytime duration in minutes of light activity using the second
+cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mod_dur_C2
+</td>
+<td style="text-align:left;">
+Total daytime duration in minutes of moderate activity using the second
+cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+vig_dur_C2
+</td>
+<td style="text-align:left;">
+Total daytime duration in minutes of vigorous activity using the second
+cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MVPA_dur_C2
+</td>
+<td style="text-align:left;">
+Total daytime duration in minutes of moderate to vigorous activity using
+the second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sed_dur_M10_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of sedentary activity within M10 window using
+the second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+light_dur_M10_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of light activity within M10 window using the
+second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mod_dur_M10_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of moderate activity within M10 window using
+the second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+vig_dur_M10_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of vigorous activity within M10 window using
+the second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MVPA_dur_M10
+</td>
+<td style="text-align:left;">
+Total duration in minutes of moderate to vigorous activity within M10
+window
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sed_dur_24h_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of sedentary activity within 24 hours using
+the second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+light_dur_24h_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of light activity within 24 hours using the
+second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mod_dur_24h_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of moderate activity within 24 hours using the
+second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+vig_dur_24h_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of vigorous activity within 24 hours using the
+second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MVPA_dur_24h_C2
+</td>
+<td style="text-align:left;">
+Total duration in minutes of moderate to vigorous activity within 24
+hours using the second cutpoints
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 mean_r
 </td>
 <td style="text-align:left;">
@@ -3075,7 +3305,8 @@ GGIR-part5
 L5
 </td>
 <td style="text-align:left;">
-Average acceleration value (mg) of least active 5 hours
+Average acceleration value (mg) of least active 5 hours from 0~24 hour
+(midnight to midnight)
 </td>
 <td style="text-align:left;">
 day
@@ -3086,10 +3317,71 @@ mMARCH.AC
 </tr>
 <tr>
 <td style="text-align:left;">
-M10
+L6
 </td>
 <td style="text-align:left;">
-Average acceleration value (mg) of most active 10 hours
+Average acceleration value (mg) of least active 6 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L7
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 7 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L8
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 8 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L9
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 9 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L10
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 10 hours from 0~24 hour
+(midnight to midnight)
 </td>
 <td style="text-align:left;">
 day
@@ -3103,7 +3395,248 @@ mMARCH.AC
 L5TIME
 </td>
 <td style="text-align:left;">
-Timing of least active 5 hours
+Central timing of least active 5 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L6TIME
+</td>
+<td style="text-align:left;">
+Central timing of least active 6 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L7TIME
+</td>
+<td style="text-align:left;">
+Central timing of least active 7 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L8TIME
+</td>
+<td style="text-align:left;">
+Central timing of least active 8 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L9TIME
+</td>
+<td style="text-align:left;">
+Central timing of least active 9 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L10TIME
+</td>
+<td style="text-align:left;">
+Central timing of least active 10 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M5
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 5 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M6
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 6 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M7
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 7 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M8
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 8 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M9
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 9 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M10
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 10 hours from 0~24 hour
+(midnight to midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M5TIME
+</td>
+<td style="text-align:left;">
+Central timing of most active 5 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M6TIME
+</td>
+<td style="text-align:left;">
+Central timing of most active 6 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M7TIME
+</td>
+<td style="text-align:left;">
+Central timing of most active 7 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M8TIME
+</td>
+<td style="text-align:left;">
+Central timing of most active 8 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M9TIME
+</td>
+<td style="text-align:left;">
+Central timing of most active 9 hours from 0~24 hour (midnight to
+midnight)
 </td>
 <td style="text-align:left;">
 day
@@ -3117,7 +3650,356 @@ mMARCH.AC
 M10TIME
 </td>
 <td style="text-align:left;">
-Timing of most active 10 hours
+Central timing of most active 10 hours from 0~24 hour (midnight to
+midnight)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L5_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 5 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L6_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 6 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L7_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 7 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L8_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 8 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L9_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 9 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L10_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of least active 10 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L5TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of least active 5 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L6TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of least active 6 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L7TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of least active 7 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L8TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of least active 8 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L9TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of least active 9 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+L10TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of least active 10 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M5_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 5 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M6_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 6 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M7_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 7 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M8_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 8 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M9_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 9 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M10_NN
+</td>
+<td style="text-align:left;">
+Average acceleration value (mg) of most active 10 hours from 12~36 hour
+(noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M5TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of most active 5 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M6TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of most active 6 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M7TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of most active 7 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M8TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of most active 8 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M9TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of most active 9 hours from 12~36 hour (noon to noon)
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+M10TIME_NN
+</td>
+<td style="text-align:left;">
+Central timing of most active 10 hours from 12~36 hour (noon to noon)
 </td>
 <td style="text-align:left;">
 day
@@ -3180,7 +4062,7 @@ Intra-daily variability measures fragmentation in the rest/activity
 rhythms.
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 GGIR-part2
@@ -3210,7 +4092,7 @@ MESOR which is short for midline statistics of rhythm, which is a rhythm
 adjusted mean. This represents mean activity level.
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3225,7 +4107,7 @@ Amplitude, a measure of half the extend of predictable variation within
 a cycle. This represents the highest activity one can achieve.
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3241,7 +4123,7 @@ each cycle. Here it has a unit of radian. This represents time to reach
 the peak.
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3255,7 +4137,7 @@ mesor_L
 Mesor in the cosinor model by using log-transformed data.
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3270,7 +4152,7 @@ Amplitude log-transformed in the cosinor model by using log-transformed
 data.
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3285,7 +4167,304 @@ Acrophase log-transformed in the cosinor model by using log-transformed
 data.
 </td>
 <td style="text-align:left;">
-subject
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+minimum_ext
+</td>
+<td style="text-align:left;">
+Minimum value of the of the function from extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+amp_ext
+</td>
+<td style="text-align:left;">
+Amplitude, a measure of half the extend of predictable variation within
+a cycle from extended cosinor model. This represents the highest
+activity one can achieve.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alpha_ext
+</td>
+<td style="text-align:left;">
+It determines whether the peaks of the curve are wider than the troughs:
+when alpha is small, the troughs are narrow and the peaks are wide; when
+alpha is large, the troughs are wide and the peaks are narrow from
+extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta_ext
+</td>
+<td style="text-align:left;">
+It dertermines whether the transformed function rises and falls more
+steeply than the cosine curve: large values of beta produce curves that
+are nearly square waves from extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acrotime_ext
+</td>
+<td style="text-align:left;">
+Acrophase is the time of day of the peak in the unit of the time (hours)
+from extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+F_pseudo_ext
+</td>
+<td style="text-align:left;">
+Measure the improvement of the fit obtained by the non-linear estimation
+of the transformed extended cosine model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UpMesor_ext
+</td>
+<td style="text-align:left;">
+Time of day of switch from low to high activity from extended cosinor
+model. Represents the timing of the rest- activity rhythm from extended
+cosinor model. Lower (earlier) values indicate increase in activity
+earlier in the day and suggest a more advanced circadian phase from
+extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DownMesor_ext
+</td>
+<td style="text-align:left;">
+Time of day of switch from high to low activity from extended cosinor
+model. Represents the timing of the rest-activity rhythm from extended
+cosinor model. Lower (earlier) values indicate decline in activity
+earlier in the day, suggesting a more advanced circadian phase from
+extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MESOR_ext
+</td>
+<td style="text-align:left;">
+A measure analogous to the MESOR of the cosine model (or half the
+deflection of the curve) can be obtained from mes=min+amp/2 from
+extended cosinor model. However, it goes through the middle of the peak,
+and is therefore not equal to the MESOR of the cosine model, which is
+the mean of the data from extended cosinor model.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+minimum_ext_L
+</td>
+<td style="text-align:left;">
+Minimum value of the of the function from extended cosinor model by
+using log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+amp_ext_L
+</td>
+<td style="text-align:left;">
+Amplitude, a measure of half the extend of predictable variation within
+a cycle from extended cosinor model by using log-transformed data. This
+represents the highest activity one can achieve.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alpha_ext_L
+</td>
+<td style="text-align:left;">
+It determines whether the peaks of the curve are wider than the troughs:
+when alpha is small, the troughs are narrow and the peaks are wide; when
+alpha is large, the troughs are wide and the peaks are narrow from
+extended cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta_ext_L
+</td>
+<td style="text-align:left;">
+It dertermines whether the transformed function rises and falls more
+steeply than the cosine curve: large values of beta produce curves that
+are nearly square waves from extended cosinor model by using
+log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acrotime_ext_L
+</td>
+<td style="text-align:left;">
+Acrophase is the time of day of the peak in the unit of the time (hours)
+from extended cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+F_pseudo_ext_L
+</td>
+<td style="text-align:left;">
+Measure the improvement of the fit obtained by the non-linear estimation
+of the transformed extended cosine model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UpMesor_ext_L
+</td>
+<td style="text-align:left;">
+Time of day of switch from low to high activity from extended cosinor
+model. Represents the timing of the rest- activity rhythm from extended
+cosinor model. Lower (earlier) values indicate increase in activity
+earlier in the day and suggest a more advanced circadian phase from
+extended cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DownMesor_ext_L
+</td>
+<td style="text-align:left;">
+Time of day of switch from high to low activity from extended cosinor
+model. Represents the timing of the rest-activity rhythm from extended
+cosinor model. Lower (earlier) values indicate decline in activity
+earlier in the day, suggesting a more advanced circadian phase from
+extended cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MESOR_ext_L
+</td>
+<td style="text-align:left;">
+A measure analogous to the MESOR of the cosine model (or half the
+deflection of the curve) can be obtained from mes=min+amp/2 from
+extended cosinor model. However, it goes through the middle of the peak,
+and is therefore not equal to the MESOR of the cosine model, which is
+the mean of the data from extended cosinor model by using
+log-transformed data.
+</td>
+<td style="text-align:left;">
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3296,11 +4475,11 @@ mMARCH.AC
 PC1
 </td>
 <td style="text-align:left;">
-1st principal component score from functional principal component
-analysis (FPCA).
+1st principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3311,11 +4490,11 @@ mMARCH.AC
 PC2
 </td>
 <td style="text-align:left;">
-2nd principal component score from functional principal component
-analysis (FPCA).
+2nd principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3326,11 +4505,11 @@ mMARCH.AC
 PC3
 </td>
 <td style="text-align:left;">
-3rd principal component score from functional principal component
-analysis (FPCA).
+3rd principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3341,11 +4520,11 @@ mMARCH.AC
 PC4
 </td>
 <td style="text-align:left;">
-4th principal component score from functional principal component
-analysis (FPCA).
+4th principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3356,11 +4535,11 @@ mMARCH.AC
 PC5
 </td>
 <td style="text-align:left;">
-5th principal component score from functional principal component
-analysis (FPCA).
+5th principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3371,11 +4550,11 @@ mMARCH.AC
 PC6
 </td>
 <td style="text-align:left;">
-6th principal component score from functional principal component
-analysis (FPCA).
+6th principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3386,11 +4565,11 @@ mMARCH.AC
 PC7
 </td>
 <td style="text-align:left;">
-7th principal component score from functional principal component
-analysis (FPCA).
+7th principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3401,11 +4580,11 @@ mMARCH.AC
 PC8
 </td>
 <td style="text-align:left;">
-8th principal component score from functional principal component
-analysis (FPCA).
+8th principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3416,11 +4595,11 @@ mMARCH.AC
 PC9
 </td>
 <td style="text-align:left;">
-9th principal component score from functional principal component
-analysis (FPCA).
+9th principal component score from day-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
-subject
+day
 </td>
 <td style="text-align:left;">
 mMARCH.AC
@@ -3431,8 +4610,561 @@ mMARCH.AC
 PC10
 </td>
 <td style="text-align:left;">
-10th principal component score from functional principal component
-analysis (FPCA).
+10th principal component score from day-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mesor_S
+</td>
+<td style="text-align:left;">
+Apply coninor model using subject level data. MESOR which is short for
+midline statistics of rhythm, which is a rhythm adjusted mean. This
+represents mean activity level.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+amp_S
+</td>
+<td style="text-align:left;">
+Apply coninor model using subject level data. Amplitude, a measure of
+half the extend of predictable variation within a cycle. This represents
+the highest activity one can achieve using subject level data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acro_S
+</td>
+<td style="text-align:left;">
+Apply coninor model using subject level data. Acrophase, a measure of
+the time of the overall high values recurring in each cycle. Here it has
+a unit of radian. This represents time to reach the peak.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+mesor_L_S
+</td>
+<td style="text-align:left;">
+Apply coninor model using subject level data. Mesor in the cosinor model
+by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+amp_L_S
+</td>
+<td style="text-align:left;">
+Apply coninor model using subject level data. Amplitude log-transformed
+in the cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acro_L_S
+</td>
+<td style="text-align:left;">
+Apply coninor model using subject level data. Acrophase log-transformed
+in the cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+minimum_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Minimum value of
+the of the function from extended cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+amp_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Amplitude, a
+measure of half the extend of predictable variation within a cycle from
+extended cosinor model. This represents the highest activity one can
+achieve.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alpha_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. It determines
+whether the peaks of the curve are wider than the troughs: when alpha is
+small, the troughs are narrow and the peaks are wide; when alpha is
+large, the troughs are wide and the peaks are narrow from extended
+cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. It dertermines
+whether the transformed function rises and falls more steeply than the
+cosine curve: large values of beta produce curves that are nearly square
+waves from extended cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acrotime_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Acrophase is the
+time of day of the peak in the unit of the time (hours) from extended
+cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+F_pseudo_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Measure the
+improvement of the fit obtained by the non-linear estimation of the
+transformed extended cosine model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UpMesor_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Time of day of
+switch from low to high activity from extended cosinor model. Represents
+the timing of the rest- activity rhythm from extended cosinor model.
+Lower (earlier) values indicate increase in activity earlier in the day
+and suggest a more advanced circadian phase from extended cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DownMesor_ext_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Time of day of
+switch from high to low activity from extended cosinor model. Represents
+the timing of the rest-activity rhythm from extended cosinor model.
+Lower (earlier) values indicate decline in activity earlier in the day,
+suggesting a more advanced circadian phase from extended cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MESOR_ext_S
+</td>
+<td style="text-align:left;">
+A measure analogous to the MESOR of the cosine model (or half the
+deflection of the curve) can be obtained from mes=min+amp/2 from
+extended cosinor model. However, it goes through the middle of the peak,
+and is therefore not equal to the MESOR of the cosine model, which is
+the mean of the data from extended cosinor model.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+minimum_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Minimum value of
+the of the function from extended cosinor model by using log-transformed
+data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+amp_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. amplitude, a
+measure of half the extend of predictable variation within a cycle from
+extended cosinor model by using log-transformed data. This represents
+the highest activity one can achieve.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alpha_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. It determines
+whether the peaks of the curve are wider than the troughs: when alpha is
+small, the troughs are narrow and the peaks are wide; when alpha is
+large, the troughs are wide and the peaks are narrow from extended
+cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+beta_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. It dertermines
+whether the transformed function rises and falls more steeply than the
+cosine curve: large values of beta produce curves that are nearly square
+waves from extended cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+acrotime_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Acrophase is the
+time of day of the peak in the unit of the time (hours) from extended
+cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+F_pseudo_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Measure the
+improvement of the fit obtained by the non-linear estimation of the
+transformed extended cosine model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+UpMesor_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Time of day of
+switch from low to high activity from extended cosinor model. Represents
+the timing of the rest- activity rhythm from extended cosinor model.
+Lower (earlier) values indicate increase in activity earlier in the day
+and suggest a more advanced circadian phase from extended cosinor model
+by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DownMesor_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. Time of day of
+switch from high to low activity from extended cosinor model. Represents
+the timing of the rest-activity rhythm from extended cosinor model.
+Lower (earlier) values indicate decline in activity earlier in the day,
+suggesting a more advanced circadian phase from extended cosinor model
+by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MESOR_ext_L_S
+</td>
+<td style="text-align:left;">
+Apply extended coninor model using subject level data. A measure
+analogous to the MESOR of the cosine model (or half the deflection of
+the curve) can be obtained from mes=min+amp/2 from extended cosinor
+model. However, it goes through the middle of the peak, and is therefore
+not equal to the MESOR of the cosine model, which is the mean of the
+data from extended cosinor model by using log-transformed data.
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC1_S
+</td>
+<td style="text-align:left;">
+1st principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC2_S
+</td>
+<td style="text-align:left;">
+2nd principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC3_S
+</td>
+<td style="text-align:left;">
+3rd principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC4_S
+</td>
+<td style="text-align:left;">
+4th principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC5_S
+</td>
+<td style="text-align:left;">
+5th principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC6_S
+</td>
+<td style="text-align:left;">
+6th principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC7_S
+</td>
+<td style="text-align:left;">
+7th principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC8_S
+</td>
+<td style="text-align:left;">
+8th principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC9_S
+</td>
+<td style="text-align:left;">
+9th principal component score from subject-level functional principal
+component analysis (FPCA).
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+mMARCH.AC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+PC10_S
+</td>
+<td style="text-align:left;">
+10th principal component score from subject-level functional principal
+component analysis (FPCA).
 </td>
 <td style="text-align:left;">
 subject

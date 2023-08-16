@@ -96,7 +96,14 @@ nonwear[,"NonWearMin"]<-15*nonwear[,"RowNonWear"]
 
 inputfiles<-list.files(pattern = "^All_*") 
 if (length(inputfiles)==0) stop("No input files such as All_studyname_ENMO.data.csv")
-key<-unlist(lapply(inputfiles,function(x) gsub(".data.csv","",unlist(strsplit(x,"\\_"))[3]))) 
+findkey<-function(x) {
+  t1<-unlist(strsplit(x,"\\_")) 
+  n<-length(t1)
+  t1[n]<-unlist(strsplit(t1[n],"\\."))[1] 
+  return(paste(t1[-c(1,2)],collapse="_"))
+} 
+
+key<-unlist(lapply(inputfiles,findkey)) 
 #key<-c("ANGLEZ", "ENMO")   
 inFN <-paste("All_",studyname,"_",key,".data.csv",sep="") 
 outFN1<-paste("flag_","All_",studyname,"_",key,".data.",epochIn,"s.csv",sep="")  

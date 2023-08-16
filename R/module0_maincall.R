@@ -21,7 +21,8 @@
 #' @param QC.nblocks.sleep.avg \code{number}  As taking the deault value of QC.nblocks.sleep.avg=c(6,29), individuals were excluded with an average number of nocturnal sleep episodes < 6 or > 29.  
 #' @param Rversion \code{character}  R version, eg. "R/3.6.3". Default is "R". 
 #' @param filename2id  \code{R function}  User defined function for converting filename to sample IDs. Default is NULL.  
-#' @param PA.threshold  \code{number}  Threshold for light, moderate and vigorous physical activity. Default is c(50,100,400).
+#' @param PA.threshold  \code{number}  Threshold for light, moderate and vigorous physical activity. Default is c(40,100,400).
+#' @param PA.threshold2  \code{number}  Second threshold for light, moderate and vigorous physical activity. Default is c(50,100,400). The activity features will end with "_C2" for those that were calculated based on PA.threshold2.
 #' @param desiredtz \code{charcter}  desired timezone: see also http://en.wikipedia.org/wiki/Zone.tab. Used in g.inspectfile(). Default is "US/Eastern". Used in g.inspectfile() function to inspect acceleromether file for brand, sample frequency in module 2. 
 #' @param RemoveDaySleeper  \code{logical}  Specify if the daysleeper nights are removed from the calculation of number of valid days for each subject. Default is FALSE. 
 #' @param part5FN   \code{character}  Specify which output is used in the GGIR part5 results. Defaut is "WW_L50M100V400_T5A5", which means that part5_daysummary_WW_L50M100V400_T5A5.csv and part5_personsummary_WW_L50M100V400_T5A5.csv are used in the analysis. 
@@ -52,7 +53,7 @@
 
 
 
-mMARCH.AC.maincall<-function(mode,useIDs.FN=NULL,currentdir,studyname,bindir=NULL, outputdir, epochIn=5, epochOut=60,log.multiplier=9250,use.cluster=TRUE,QCdays.alpha=7,QChours.alpha=16,QCnights.feature.alpha=c(0,0,0,0),  DoubleHour=c("average","earlier","later")[1], QC.sleepdur.avg=c(3,12),QC.nblocks.sleep.avg=c(6,29), Rversion="R", filename2id=NULL, PA.threshold=c(50,100,400), desiredtz="US/Eastern", RemoveDaySleeper=FALSE, part5FN="WW_L50M100V400_T5A5", NfileEachBundle=20, holidayFN=NULL,trace=FALSE){
+mMARCH.AC.maincall<-function(mode,useIDs.FN=NULL,currentdir,studyname,bindir=NULL, outputdir, epochIn=5, epochOut=60,log.multiplier=9250,use.cluster=TRUE,QCdays.alpha=7,QChours.alpha=16,QCnights.feature.alpha=c(0,0,0,0),  DoubleHour=c("average","earlier","later")[1], QC.sleepdur.avg=c(3,12),QC.nblocks.sleep.avg=c(6,29), Rversion="R", filename2id=NULL, PA.threshold=c(40,100,400), PA.threshold2=c(50,100,400),desiredtz="US/Eastern", RemoveDaySleeper=FALSE, part5FN="WW_L50M100V400_T5A5", NfileEachBundle=20, holidayFN=NULL,trace=FALSE){
 
 
 # note for sleep clean: Jones et al cleaned sleep data based on Nblocks of sleep and durations of sleep by removing sleep features for individuals with an average sleep duration <3 h or >12 h or with an average number of nocturnal sleep episodes =5 or =30.  Apply to JIVE (part 7c) after subject-avg feature were calculated.
@@ -65,8 +66,9 @@ message(paste("use.cluster=",use.cluster,sep=""))
   
 setwd(currentdir) 
 on.exit(setwd(currentdir))
-#require(xlsx)
-  
+ # require(xlsx)
+ # requireNamespace(xlsx)
+
 #-------------newfill------------------------ 
 nf<- length( list.files(paste(outputdir,"/meta/basic",sep="") ,recursive=TRUE) )
 message(paste("There are ",nf," files in /basic folder in total",sep=""))
@@ -80,12 +82,13 @@ nfeach<-NfileEachBundle # 20 #split in biowulf,~4-5 minutes/file
 
 #-------------end fill-----------------------
 csvdata<-  list.files(paste(outputdir,"/meta/csv",sep="") ,recursive=TRUE,full.names=TRUE)  
+message(paste("There are ",length(csvdata)," files in /csv folder in total",sep=""))
 Vnames<-toupper(colnames(read.csv(csvdata[1],header=1,nrow=10))[-1])  
 
 ######################################################################### 
 # (0) check input files 
 ######################################################################### 
-if (mode<=2){
+if (mode==1 | mode==2){
 message("")
 message("To run mMARCH.AC, you need input some GGIR outputs for module1, module2 and module7................")
 if (nf==0) warning(paste("No files were found in GGIR foldes: ",outputdir,"/meta/basic",sep=""))
@@ -183,12 +186,12 @@ if (is.null(part5FN)) part5FN=paste("WW_L",PA.threshold[1],"M",PA.threshold[2],"
 if (2 %in% mode ){
 message("# (2a) Get summary of ggir output---------------------------") 
  
-ggir.summary(bindir,outputdir,studyname,numericID=FALSE,sortByid="filename",subdir="summary",part5FN=part5FN,QChours.alpha=,QChours.alpha,filename2id=filename2id,desiredtz=desiredtz,trace=trace)
+ggir.summary(bindir=bindir,outputdir=outputdir,studyname=studyname,numericID=FALSE,sortByid="filename",subdir="summary",part5FN=part5FN,QChours.alpha=QChours.alpha,filename2id=filename2id,desiredtz=desiredtz,trace=trace)
 message(" Message: please check duplicate ids and make a csv file (duplicate=remove)") 
  
 message("# (2b) plot nonwear vs n.valid.hours---------------------------")
 message(" please make sure you have only one NonWear.data*.csv in the data folder") 
-call.after.plot(studyname,outputdir,workdir= paste(currentdir,"/",writedir,sep=""),epochOut,trace) 
+call.after.plot(studyname=studyname,outputdir=outputdir,workdir= paste(currentdir,"/",writedir,sep=""),epochOut=epochOut,trace=trace) 
 }
 #########################################################################  
 # (3) data Shrink
@@ -231,6 +234,7 @@ L$log.multiplier_xxx<-paste("log.multiplier=",log.multiplier, sep="")
 L$QCdays.alpha_xxx<-paste("QCdays.alpha=",QCdays.alpha, sep="")   
 L$QChours.alpha_xxx<-paste("QChours.alpha=",QChours.alpha, sep="")  
 L$PA.threshold_xxx<-paste("PA.threshold=c(",paste(PA.threshold,collapse=","),")", sep="")  
+L$PA.threshold2_xxx<-paste("PA.threshold2=c(",paste(PA.threshold2,collapse=","),")", sep="")  
 L$QCnights.feature.alpha_xxx<-paste("QCnights.feature.alpha=c(",paste(QCnights.feature.alpha,collapse=","),")", sep="")      
 L$QC.sleepdur.avg_xxx<-paste("QC.sleepdur.avg=c(",paste(QC.sleepdur.avg,collapse=","),")", sep="")     
 L$QC.nblocks.sleep.avg_xxx<-paste("QC.nblocks.sleep.avg=c(",paste(QC.nblocks.sleep.avg,collapse=","),")", sep="")   

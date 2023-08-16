@@ -60,7 +60,7 @@ All mMARCH.AC code is written in R and reports generated in R Markdown. The R pa
 
 [Download and install R](https://cran.r-project.org/)
 
-[Download and install RStudio](https://www.rstudio.com/products/rstudio) (optional, but recommended)
+[Download and install RStudio](https://posit.co/products/open-source/rstudio/) (optional, but recommended)
 
 Download GGIR with its dependencies, you can do this with one command from the console command line:
 
@@ -68,6 +68,14 @@ Download GGIR with its dependencies, you can do this with one command from the c
 install.packages("mMARCH.AC", dependencies = TRUE)
 ```
 
+
+Alternatively, to install the latest development version with the latest bug fixes use instead:
+
+```
+install.packages("remotes")
+remotes::install_github("WeiGuoNIMH/mMARCH.AC")
+```
+ 
 ## Prepare folder structure
 
 1. folder of .bin files for GGIR or a file listing all .bin files
@@ -644,7 +652,7 @@ module7d_weekend_studyname_new_features_page5_denseFLMM_subject_PCs.csv |	Functi
 **Sleep Domain**  
 
 
-```{r,echo=F}
+```{r s1,echo=F}
 library(xlsx)   
 library(knitr)  
 library(kableExtra)  
@@ -670,14 +678,14 @@ kable(dict.SL) %>%
 
 **Physical Activity Domain**      
  
-```{r,echo=F}
+```{r s2,echo=F}
 kable(dict.PA) %>%
      kable_styling(bootstrap_options = c("striped", "hover"))
 ```
 
 **Circadian Rhythmicity Domain**    
   
-```{r,echo=F}
+```{r s3,echo=F}
 kable(dict.CR) %>%
     kable_styling(bootstrap_options = c("striped", "hover"))
 ```
@@ -687,7 +695,7 @@ Note
      (2) The column of source indicates the feature source. R indiciates the feature was calculated based on activity data. Part2, part4 and part5 in 'Source' column indicate the feature was extracted from summary results from GGIR outputs.
 
 
-```{r,eval=FALSE,include=FALSE} 
+```{r s4,eval=FALSE,include=FALSE} 
 d1<-read.xlsx("mMARCH.AC.output.description.xlsx",sheetName="output.format")  
 
 cd /data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/mMARCH.AC/vignettes     

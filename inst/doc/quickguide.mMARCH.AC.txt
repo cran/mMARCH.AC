@@ -2,11 +2,25 @@
 #######################################################################
 How to run mMARCH.AC?
 #######################################################################
+(0) Install the package
+
+Install GGIR with its dependencies from CRAN
+
+install.packages("GGIR", dependencies = TRUE)
+
+
+Alternatively, to install the latest development version with the latest bug fixes use instead:
+
+install.packages("remotes")
+remotes::install_github("WeiGuoNIMH/mMARCH.AC")
+
+ 
 
 (1) create the template file in R 
  
 library(mMARCH.AC) 
-create.shell()
+create.shell() 
+
 
 (2) cat STUDYNAME_part0.maincall.R > Example_part0.maincall.R
 

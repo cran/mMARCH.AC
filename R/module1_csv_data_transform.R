@@ -139,7 +139,7 @@ message("Get nonwear matrix-------- ")
 }
 }
 
-#2.1 merge csv files............................................................
+#2.1 merge csv files for enmo, angleZ, X etc........................................................
 if (mergeVar==2){ 
 write.csv(csvData.files2,file=paste(outFN[1],"_csvlist.csv",sep=""),row.names=F )
 enmo.data.mer<-list() 

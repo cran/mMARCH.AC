@@ -54,7 +54,7 @@ data.imputation<-function(workdir, csvInput=NULL ){
  
 # use only "remove16h7day" ==1 lines in imputation and leave other lines same without impu.
 olddir<-getwd()
-
+# library(xlsx)   
 setwd(workdir)
 on.exit(setwd(workdir)) 
 
@@ -65,13 +65,25 @@ if (length(csvInput )==0) stop("No input files such as flag_All_studyname_ENMO.d
 epoch<-unlist(lapply(csvInput,function(x) gsub("s","",unlist(strsplit(x,"\\."))[3]))) 
 epoch<-max(as.numeric(epoch))
 csvInput<-csvInput[grep(epoch,csvInput)]  
+}  
+
+findkey<-function(x) { #key do not have . but _ !!!
+  t1<-unlist(strsplit(x,"\\_")) 
+  n<-length(t1)
+  t1[n]<-unlist(strsplit(t1[n],"\\."))[1] 
+  return(paste(t1[-c(1,2,3)],collapse="_"))
 } 
-key<-unlist(lapply(csvInput,function(x) gsub(".data.csv","",unlist(strsplit(x,"\\_"))[4])))  
-key<-unlist(lapply(key,function(x) gsub(".data.csv","",unlist(strsplit(x,"\\."))[1])))  
+key<-unlist(lapply(csvInput,findkey))  
 
-outFN<-paste("impu.",csvInput,sep="")
-outFN2<-paste("IDMatrix.",csvInput,sep="")
-
+ 
+summaryFiles<-list.files("../summary") 
+summaryFN1<-summaryFiles[grep("_ggir_output_summary.xlsx",summaryFiles)] 
+summaryP2<-read.xlsx(paste("../summary/",summaryFN1,sep=""),header=0,sheetName = "2_fileSummary")  
+ggirV<-as.character(gsub("X","",summaryP2[1,1]))
+csvInput2<-gsub(".csv",paste(".GGIR",ggirV,".csv",sep=""),csvInput)
+outFN<-paste("impu.",csvInput2,sep="")
+outFN2<-paste("IDMatrix.",csvInput2,sep="")
+ 
 
 for (f in 1:length(csvInput)){
 
@@ -130,7 +142,4 @@ setwd(olddir)
 on.exit(setwd(olddir)) 
 
 }
-
-
-#bug1: colaus 9660 has csv, but no part2summary, so newID=NA from module2. So  remove it from clean data.
  

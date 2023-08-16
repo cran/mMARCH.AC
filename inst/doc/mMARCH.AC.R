@@ -196,7 +196,7 @@ kable(input,format = "html")
 ## ----echo=F-------------------------------------------------------------------
 kable(output)
 
-## ----echo=F-------------------------------------------------------------------
+## ----s1,echo=F----------------------------------------------------------------
 library(xlsx)   
 library(knitr)  
 library(kableExtra)  
@@ -217,15 +217,15 @@ row.names(dict.CR)<-NULL
 kable(dict.SL) %>%
      kable_styling(bootstrap_options = c("striped", "hover"))
 
-## ----echo=F-------------------------------------------------------------------
+## ----s2,echo=F----------------------------------------------------------------
 kable(dict.PA) %>%
      kable_styling(bootstrap_options = c("striped", "hover"))
 
-## ----echo=F-------------------------------------------------------------------
+## ----s3,echo=F----------------------------------------------------------------
 kable(dict.CR) %>%
     kable_styling(bootstrap_options = c("striped", "hover"))
 
-## ----eval=FALSE,include=FALSE-------------------------------------------------
+## ----s4,eval=FALSE,include=FALSE----------------------------------------------
 #  d1<-read.xlsx("mMARCH.AC.output.description.xlsx",sheetName="output.format")
 #  
 #  cd /data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/mMARCH.AC/vignettes

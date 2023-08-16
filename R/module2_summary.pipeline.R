@@ -43,6 +43,10 @@
 
 ggir.summary<-function(bindir=NULL, outputdir,studyname, numericID=FALSE,sortByid="filename",subdir="summary",part5FN="WW_L50M125V500_T5A5",QChours.alpha=16, filename2id=NULL, desiredtz="US/Eastern",trace=FALSE){
 
+# source("/vf/users/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/mMARCH.AC/R/module2_summary.pipeline.R")
+ 
+
+if (trace) print("module2.1 prepare the summary file")
 olddir<-getwd()
 oldpar <- par(no.readonly = TRUE)
  
@@ -54,7 +58,7 @@ filename2id<-function(x) {
 }   
 } 
 
-
+if (trace) print("module2.2 prepare the summary file")
 ggir.dir<- outputdir  
 workdir<-paste(getwd(),"/",subdir,sep="")
 try(system(paste("mkdir ",workdir,sep="")))
@@ -70,6 +74,7 @@ return(y)
 }
 
 
+if (trace) print("module2.3 prepare the summary file")
 outFN<-c("c1.filesummary.csv","c2_iderror.info.csv","c3_Nmissing_summary.csv","c4.Nvaliddays.pdf","c4.Nvaliddays.txt",         "c6.dataMissing.pattern.pdf","c9.part24daysummary.info.csv")
 BDfn<-paste(studyname,"_ggir_output_summary.xlsx",sep="")
 try(system("rm *_ggir_output_summary.xlsx"))
@@ -85,11 +90,15 @@ message("1) file lists starts...")
 BD<-NULL #big data as final output  
  
 ggirfiletype<-c(".bin",".csv",".cwa",".wav",".gt3x")
+findfiletype<- function(x) {t<-unlist(strsplit(x,"\\.")); return(paste(".",t[length(t)],sep=""))}
+ 
+
 if (!is.null(bindir)){
 files0<-list.files(path = bindir,recursive = TRUE)
 files1<-unlist(lapply(files0,wg1knife_split,split="/",k=-1))  #remove sub directory 
-S1<-NULL; for (s in 1:length(ggirfiletype)) S1<-c(S1,grep(ggirfiletype[s], files1, fixed=T))
-inFN0 <- files1[unique(order(S1))]  
+filetype<-unlist(lapply(files1,findfiletype))
+ 
+inFN0 <- files1[which(filetype %in% ggirfiletype)]  
 inFN1<-sort(inFN0)
 } else { 
 files0<-list.files(path = paste(ggir.dir,"/meta/basic",sep="") ,recursive = TRUE) 
@@ -369,6 +378,7 @@ for (i in 1:length(idlist)){
 # (8)   Day sleeper (pay attention to date format for part2 and part4)
 #  merge sleep.full report for the purpose of (1) define daysleeper (2) sleep Matrix for PA_dur calculation
 # if using clean file, daysleeper=1 : mark; missing will be removed so daysleeper does not matter 
+# part2 .bin calendar_date =2017-10-31T05:15:00-0400;  part4 .bin.RData calendar_date=16/9/2010
 ##########################################################################################################  
 message(paste("6) Mark day sleeper from ",sleepFull.fn,sep=""))
  
@@ -393,7 +403,7 @@ d2 <-merge(d,part4,by=c("filename","Date"),suffix=c("",".2"),all=TRUE)  #filenam
 
  
 message("   print part2daysummary")
-head(d2)
+# head(d2)
 write.csv(d2,file="part24daysummary.info.csv",row.names=F)   #c9.part24daysummary.info.csv
  
  
@@ -435,11 +445,13 @@ inspect<-NULL
 RData.files1 <-list.files(path = bindir,recursive = TRUE, full.names = TRUE) 
 # RData.files2 <-RData.files1[ grep(".bin",RData.files1)  ] #find .bin.cpgz 
 nchar <-nchar(RData.files1)
-RData.files2 <-RData.files1[which(substr(RData.files1,nchar-3,nchar) %in% ggirfiletype)]
+
+filetype<-unlist(lapply(RData.files1,findfiletype))  
+RData.files2 <-RData.files1[which(filetype %in% ggirfiletype)]
 
 inspect<-NULL
 for ( f in 1:length(RData.files2)){ 
- 
+# print(f)
 t<-NULL
 try(t<-g.inspectfile(datafile= RData.files2[f], desiredtz =  desiredtz ) ,silent=TRUE) 
 if (!is.null(t)){temp<-rbind(c("filename",t$filename), 
@@ -451,8 +463,9 @@ if (!is.null(t)){temp<-rbind(c("filename",t$filename),
 temp<-rbind(temp,cbind(rownames(t$header),as.character(unlist(t$header[,1]))) )
 temp2<-t(temp[,2])
 colnames(temp2)<-temp[,1]
-inspect<-rbind(inspect,temp2) 
-}} 
+if (f==1) inspect<-temp2 else inspect<-merge(inspect,temp2,by=intersect(colnames(inspect),colnames(temp2)),all=TRUE)  #very slow
+    ### if (f==1) inspect<-temp2 else {          if (ncol(temp2)==ncol(inspect)) inspect<-rbind(inspect,temp2) else inspect<-merrge(inspect,temp2,by=intersect(colnames(inspect),colnames(temp2)),all=TRUE) }
+}} #f  
 }
 if (is.null(bindir)){
 part2summary<-read.csv(inFN3[1],header=1,stringsAsFactors=F)
@@ -485,7 +498,7 @@ message(paste("The minimum hour for complete days is ",min(d[which(d[,"missing"]
 message(paste("The maximum hour for missing days is ",max(d[which(d[,"missing"]=="M"),"N.valid.hours"]),sep=""))
 
 t1<-table(d[which(d[,"measurementday"]==1),"weekday"]) 
-t1<-t1[c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")] 
+t1<-t1[ c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday") ] 
 barplot(t1,xlab="First Day",cex.names=0.8)   
 hist(fid[,2],xlab="N_valid_days",main="N valid days for all sampes")
 barplot(table(fmissing[,"measurementday"]),main="Which day is missing",xlab="measurementday")
