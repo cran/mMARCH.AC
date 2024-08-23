@@ -61,7 +61,8 @@ filename2id<-function(x) {
 if (trace) print("module2.2 prepare the summary file")
 ggir.dir<- outputdir  
 workdir<-paste(getwd(),"/",subdir,sep="")
-try(system(paste("mkdir ",workdir,sep="")))
+# try(system(paste("mkdir ",workdir,sep="")))
+try(dir.create( workdir )) 
 setwd(workdir)
 on.exit(setwd(workdir)) 
 message(workdir)
@@ -77,7 +78,9 @@ return(y)
 if (trace) print("module2.3 prepare the summary file")
 outFN<-c("c1.filesummary.csv","c2_iderror.info.csv","c3_Nmissing_summary.csv","c4.Nvaliddays.pdf","c4.Nvaliddays.txt",         "c6.dataMissing.pattern.pdf","c9.part24daysummary.info.csv")
 BDfn<-paste(studyname,"_ggir_output_summary.xlsx",sep="")
-try(system("rm *_ggir_output_summary.xlsx"))
+#try(system("rm *_ggir_output_summary.xlsx")) 
+try(file.remove(BDfn))
+
 # install.packages("xlsx") 
 # library("xlsx")  
 ##########################################################################################################  
@@ -309,8 +312,8 @@ colnames(f)<-c(colnames(ansM)[j],"counts")
 nf <- length(f[,2])
 if (nf>=10){ #plot by removing the highest value
 ylim.b<-sort(f[,2],partial=nf-1)[nf-1]
-barplot(f[,2],xlab=colnames(f)[1],main=paste(nrow(ansM)," samples",sep=""),names.arg=f[,1],ylab="Frequency")
-barplot(f[,2],xlab=colnames(f)[1],main=paste(nrow(ansM)," samples",sep=""),ylim=c(0,ylim.b*1.2),names.arg=f[,1],ylab="Frequency")
+try(barplot(f[,2],xlab=colnames(f)[1],main=paste(nrow(ansM)," samples",sep=""),names.arg=f[,1],ylab="Frequency"))
+try(barplot(f[,2],xlab=colnames(f)[1],main=paste(nrow(ansM)," samples",sep=""),ylim=c(0,ylim.b*1.2),names.arg=f[,1],ylab="Frequency"))
 }
 countD<-mycbind(countD, f)
 # write.table(t(f),file=outFN[5],row.names=T,col.names=F,append=TRUE,quote=F)
@@ -489,33 +492,33 @@ fmissing<-d[which(d[,"missing"]=="M"),]
 fid<-unique(d[,c(sortByid,"Ndays")])
 
  
-hist(d[,"N.valid.hours"],main="N valid hours for all",xlab="Hour")
-hist(d[which(d[,"missing"]=="C"),"N.valid.hours"],main="N valid hours for Complete days",xlab="Hour") 
-hist(d[which(d[,"missing"]=="M"),"N.valid.hours"],main="N valid hours for missing days",xlab="Hour") 
-plot(d[which(d[,"missing"]=="C"),"N.valid.hours"],main="N valid hours for Complete days",ylab="Hour")
-plot(d[which(d[,"missing"]=="M"),"N.valid.hours"],main="N valid hours for missing days",ylab="Hour")   
+try(hist(d[,"N.valid.hours"],main="N valid hours for all",xlab="Hour"))
+try(hist(d[which(d[,"missing"]=="C"),"N.valid.hours"],main="N valid hours for Complete days",xlab="Hour") )
+try(hist(d[which(d[,"missing"]=="M"),"N.valid.hours"],main="N valid hours for missing days",xlab="Hour") )
+try(plot(d[which(d[,"missing"]=="C"),"N.valid.hours"],main="N valid hours for Complete days",ylab="Hour"))
+try(plot(d[which(d[,"missing"]=="M"),"N.valid.hours"],main="N valid hours for missing days",ylab="Hour") )  
 message(paste("The minimum hour for complete days is ",min(d[which(d[,"missing"]=="C"),"N.valid.hours"]),sep=""))
 message(paste("The maximum hour for missing days is ",max(d[which(d[,"missing"]=="M"),"N.valid.hours"]),sep=""))
 
 t1<-table(d[which(d[,"measurementday"]==1),"weekday"]) 
 t1<-t1[ c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday") ] 
-barplot(t1,xlab="First Day",cex.names=0.8)   
-hist(fid[,2],xlab="N_valid_days",main="N valid days for all sampes")
-barplot(table(fmissing[,"measurementday"]),main="Which day is missing",xlab="measurementday")
+try(barplot(t1,xlab="First Day",cex.names=0.8)  ) 
+try(hist(fid[,2],xlab="N_valid_days",main="N valid days for all sampes"))
+try(barplot(table(fmissing[,"measurementday"]),main="Which day is missing",xlab="measurementday")) 
 t2=table(fmissing[,"ith_day"])
 s1<-which(names(t2)>0)
 s2<-which(names(t2)<0) 
 t2<-t2[c(s1,s2)]
-barplot(t2,main="Which day is missing",xlab="ith day")
+try(barplot(t2,main="Which day is missing",xlab="ith day"))
 t5<- table(misspattern) 
 t6<-t5[t5>=5] 
 
  
 if (nrow(d.cmc)>=1){
-hist(d.cmc[,"N.valid.hours"],xlab="N_valid_hours in missing days",main="missing pattern: ...CMC...") 
+try(hist(d.cmc[,"N.valid.hours"],xlab="N_valid_hours in missing days",main="missing pattern: ...CMC...") )
 par(mai=c(1.02,2.52,0.82,0.42)) # bottom,left,up,right
-barplot(t6,main="missing pattern (f>=5)",horiz=TRUE,las=2)
-barplot(t6[t6<500],main="missing pattern",horiz=TRUE,las=2)
+try(barplot(t6,main="missing pattern (f>=5)",horiz=TRUE,las=2))
+try(barplot(t6[t6<500],main="missing pattern",horiz=TRUE,las=2))
  
 } 
 dev.off()
@@ -589,8 +592,8 @@ d<-merge(d2s,d1s,by=c("filename2","Date"), all=TRUE)
 
 write.csv(d,file="plot.nonwearVSnvalidhours.csv",row.names=F)
 pdf("plot.nonwearVSnvalidhours.pdf")
-plot(d[,"RowNonWear23na"]/4,d[,"N.valid.hours"],xlab="NonWear Time",ylab="N.valid.hours",main=studyname)
-plot(d[,"RowNonWear23"]/4,d[,"N.hours"]-d[,"N.valid.hours"],xlab="NonWear Time",ylab="N.invalid.hours",main=studyname) 
+try(plot(d[,"RowNonWear23na"]/4,d[,"N.valid.hours"],xlab="NonWear Time",ylab="N.valid.hours",main=studyname))
+try(plot(d[,"RowNonWear23"]/4,d[,"N.hours"]-d[,"N.valid.hours"],xlab="NonWear Time",ylab="N.invalid.hours",main=studyname) )
 dev.off()
 
 setwd(olddir) 

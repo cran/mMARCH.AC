@@ -49,8 +49,7 @@
 #'
 #'
 
-
-
+ 
 
 
 mMARCH.AC.maincall<-function(mode,useIDs.FN=NULL,currentdir,studyname,bindir=NULL, outputdir, epochIn=5, epochOut=60,log.multiplier=9250,use.cluster=TRUE,QCdays.alpha=7,QChours.alpha=16,QCnights.feature.alpha=c(0,0,0,0),  DoubleHour=c("average","earlier","later")[1], QC.sleepdur.avg=c(3,12),QC.nblocks.sleep.avg=c(6,29), Rversion="R", filename2id=NULL, PA.threshold=c(40,100,400), PA.threshold2=c(50,100,400),desiredtz="US/Eastern", RemoveDaySleeper=FALSE, part5FN="WW_L50M100V400_T5A5", NfileEachBundle=20, holidayFN=NULL,trace=FALSE){
@@ -174,8 +173,20 @@ message(paste("workdir=",getwd(),sep=""))
 ggir.datatransform(outputdir,subdir=writedir,studyname, numericID=FALSE,sortByid="filename",f0=1,f1=9999,epochIn ,epochOut=epochIn,DoubleHour=DoubleHour,mergeVar=2)
  
 
-catlines<-paste("   cd ",currentdir,"/",writedir,"; cat  ",studyname,"_",Vnames,".data*.csv > All_",studyname,"_",Vnames,".data.csv",sep="") 
-for (i in 1:length(Vnames)) try(system(catlines[i])) 
+#catlines<-paste("   cd ",currentdir,"/",writedir,"; cat  ",studyname,"_",Vnames,".data*.csv > All_",studyname,"_",Vnames,".data.csv",sep="") 
+#for (i in 1:length(Vnames)) try(system(catlines[i]))   #not working in windows
+
+datafn<-list.files(path=paste(currentdir,"/",writedir,sep=""))  
+top<-unlist(lapply(datafn,function(x) unlist(strsplit(x,"\\_"))[1]))
+datafn<-datafn[which(top==studyname)]
+for (i in 1:length(Vnames)) {
+     A<-datafn[grep(paste(studyname,"_",Vnames[i],".data",sep=""),datafn)]
+     if (length(A)>1) warning(paste("Found multiple files as ",A,collapse=" "))
+     B<-paste("All_",studyname,"_",Vnames[i],".data.csv",sep="") 
+     file.copy(paste(currentdir,"/",writedir,"/",A,sep=""), paste(currentdir,"/",writedir,"/",B,sep=""))
+     message(paste("The merged data ",A," was copied to ",B,sep="")) 
+} 
+message("************End mode 1 for data merge***************")  
 }
 
 #########################################################################  
@@ -306,7 +317,7 @@ annoX<-c("#", ifelse(use.cluster,"#","") ,"","","") # slient mode=0~4
 swline<-paste( annoX,"   cd ",currentdir,"; module load ",Rversion," ;   R --no-save --no-restore --args  < ",studyname,"_module0.maincall.R  ", 0:4,sep="")  
 
 RversionS<-rep(Rversion,length(outFN4_rmd))
-RversionS[ length(outFN4_rmd)-1]<-"R/3.6.3" #for r.jive package
+# RversionS[ length(outFN4_rmd)-1]<-"R/3.6.3" #for r.jive package  12-8-23,jive can run on R 4.2.2 now
 shlines<-c( "","","",  
            paste("   cd ",currentdir,"; module load ",RversionS," ; R -e \"rmarkdown::render(\'",outFN4_rmd,"\'   )\" ",sep="")   
           )

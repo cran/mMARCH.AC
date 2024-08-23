@@ -295,8 +295,8 @@ single.data.nonwear<-function(Y,ggir.dir,filename,epochIn,epochOut,ID=filename,i
   par(las=1)
   col.light = rainbow(nrow(Data3))
   x.range = 1:ncol(Data3)
-  plot(x.range, Data3[1,], type = "n", ylim = c(0,nrow(Data3)),xaxt = "n",yaxt = "n", ylab = "", xlab = "Hour", 
-  col = col.light, main = paste(ID,": ",Y,sep=""))
+  try(plot(x.range, Data3[1,], type = "n", ylim = c(0,nrow(Data3)),xaxt = "n",yaxt = "n", ylab = "", xlab = "Hour", 
+  col = col.light, main = paste(ID,": ",Y,sep="")))
  
   pchS<-c("1","2","3","4","5")
   for(i in  1:nrow(Data3)) {

@@ -17,7 +17,7 @@ get_mean_sd_hour(tind, unit2minute = 60, out = c("mean", "sd"))
 mean and sd of the input timing
 }
 \description{
-A function for calcualting the average timing of variables (in this case the M10 and L5).  Find the average timing mu that min{ sum { min[ (tind_i - mu)^2, (1440 + mu - tind_i )^2 ]}}
+A function for calcualting the average timing of variables (in this case the M10 and L5).  Find the average timing mu that min( sum ( min( (tind_i - mu)^2, (1440 + mu - tind_i )^2 )))
 }
 \examples{
 x=c(1,1,1,23,23,23) 

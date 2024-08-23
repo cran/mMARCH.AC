@@ -120,6 +120,8 @@ colnames(log.count)<-c("ID","Day",paste("MIN",1:n1440,sep=""))
 
 wear<-count 
 for (j in 3:ncol(wear)) wear[,j]<-1 
+
+write.csv(D3,file=outenmoFN,row.names=FALSE) 
 ```
 
 # Define sleep window for PA counts  

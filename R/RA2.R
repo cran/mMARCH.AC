@@ -152,7 +152,7 @@ RA_long2 = function(
 
 
 #' @title get subject average of time variables
-#' @description  A function for calcualting the average timing of variables (in this case the M10 and L5).  Find the average timing mu that min{ sum { min[ (tind_i - mu)^2, (1440 + mu - tind_i )^2 ]}} 
+#' @description  A function for calcualting the average timing of variables (in this case the M10 and L5).  Find the average timing mu that min( sum ( min( (tind_i - mu)^2, (1440 + mu - tind_i )^2 ))) 
 
 #'
 #' @param tind \code{numeric} A vector of times which we want to get an average/sd for. The first two columns have to be ID and Day.  
