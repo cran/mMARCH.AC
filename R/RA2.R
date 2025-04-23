@@ -178,10 +178,13 @@ RA_long2 = function(
 get_mean_sd_hour <- function(tind, unit2minute=60, out=c("mean","sd")){
         
         
-    tind<-tind[which(!is.na(tind))]
+ tind<-tind[which(!is.na(tind))]
+ # For GGIR3.1.4 error: L5TIME_num = 39. It should be <36 (tomorrow noon); so return NA for this function.
+
+ if (max(tind)>36) ans<-NA else {
     if(length(tind) == 0){ 
                 output=(c(NA, NA))
-  } else  {  if(length(tind) == 1){ 
+    } else  {  if(length(tind) == 1){ 
                 output=(c(tind, 0))  } else {
 
 
@@ -189,14 +192,14 @@ get_mean_sd_hour <- function(tind, unit2minute=60, out=c("mean","sd")){
         # change input to minutes data
         if (unit2minute!=1) tind<-tind*unit2minute
         # tind is from 0 to 24 hours. But L5TIME_NN is 12~36
-        if (max(tind,na.rm=TRUE)>24*60) {windowshift<-12*60
+        if (max(tind)>24*60) {windowshift<-12*60
                                          tind<-tind-12*60 } else windowshift<-0   
        
        
         tmin=0  
         tmax=1440 
         search_len=1441  
-        if (max(tind)>tmax) stop("Wrong tind input with maximum >24 h")
+        if (max(tind,na.rm=TRUE)>tmax) stop("Wrong tind input with maximum >24 h")
         tgrid <- seq(tmin, tmax, len=search_len)
         dmat  <- outer(tind, tgrid, FUN="-")  #Xij-mu matrix with length(tind)*1441
         dmat  <- pmin(dmat^2, (1440-abs(dmat))^2)
@@ -208,7 +211,10 @@ get_mean_sd_hour <- function(tind, unit2minute=60, out=c("mean","sd")){
         }
     }
       
-        output[which(c("mean","sd") %in% out)]
+       ans<- output[which(c("mean","sd") %in% out)]
+  } #if(max(tind)>36)
+
+       return(ans)
 }
  
  

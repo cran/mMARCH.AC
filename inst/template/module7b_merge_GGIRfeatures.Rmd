@@ -90,7 +90,7 @@ file.copy(from=feaFN, to=dictionary, overwrite = TRUE)
 
 # 1 Read mMARCH.AC new features  
 
-```{r chunk1}  
+```{r c2}  
 newfea<-read.csv(foutFN("1_features",studyname), header = TRUE,stringsAsFactors=F)
 fpca.day<-read.csv(foutFN("4_denseFLMM_day_PCs",studyname), header = TRUE,stringsAsFactors=F)
 fpca.subject<-read.csv(foutFN("5_denseFLMM_subject_PCs",studyname), header = TRUE,stringsAsFactors=F)
@@ -100,7 +100,7 @@ newfeadata<-merge(newfea,fpca,by=c("filename","Date","newID"),all=TRUE)
 ```
 
 # 2 Read sleep features and other reference features from GGIR summary files
-```{r read2}
+```{r c3}
 data.dir2<-paste(outputdir,"/results",sep="")   
 inFN2<-c("part2_summary",
          "part2_daysummary",
@@ -114,7 +114,7 @@ sleepFull<-read.csv(sleepFull.fn,head=1,stringsAsFactors=F)
 
 # 3 Feature list
 
-```{r dict,echo=FALSE}
+```{r c4dict,echo=FALSE}
 dict<-read.xlsx(dictionary,head=1,sheetName="dictionary",stringsAsFactors=F) 
 dict<-dict[which(!is.na(dict[,"Domain"])),]
 
@@ -136,7 +136,7 @@ table(dict[,"Source"])
 ```
 
  
-```{r chunk2,include=FALSE}
+```{r c5,include=FALSE}
 ##################################################### 
 # 1.1 sleep variables for sleep domain
  
@@ -257,7 +257,7 @@ Notice that part 4 is focused on sleep research, by which the cleaned reported i
 
  
 
-```{r chunk3,results="hide"}
+```{r c6,results="hide"}
 # d4,d6=bin.RData, d2=.bin
 ##################################################### 
 # 1.3  merge all features
@@ -321,7 +321,7 @@ Here, the values of sleep variables were changed to NA when the nights have 0 sl
 
 Note, L5TIME and M10TIME will be averaged using circle mean formula provided by get_mean_sd_hour().
 
-```{r chunk4,results="hide"}
+```{r c7,results="hide"}
 Fmer4<-Fmer2
 
 numWD<-function(x) which(c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")==x) 
@@ -343,29 +343,34 @@ if (MustHaveTAC & length(S7)>=1) Fmer5<-Fmer4[S7,] else Fmer5<-Fmer4   #clean fi
 
 write.csv(Fmer5, file=outFN[2],   row.names = FALSE )  #clean data
 ```
-  
-```{r chunk42,results="hide"}
-###0) add duplicate L5TIME,etc column for later circle mean calculation
+
+
+
+ 
+```{r c8,results="hide"}
+#0) add duplicate L5TIME,etc column for later circle mean calculation
 timingC<-grep("TIME",colnames(Fmer5))
 timingMatrix<-Fmer5[,timingC]
 colnames(timingMatrix)<-paste(colnames(timingMatrix),"_cmean",sep="") #circle mean columns
 lastC<-max(timingC)
 Fmer6<-cbind(Fmer5[,c(1:lastC)],timingMatrix,Fmer5[(lastC+1):ncol(Fmer5)])
 
-###a) Take averages for both subject and day level features although subject feature has same values for all days................
+#..a) Take averages for both subject and day level features although subject feature has same values for all days................
     # note use na.action=na.pass in aggregate, otherwise you will lose rows with NA in other columns
  
 Ncol8<-which(colnames(Fmer6)=="weekday")   # Ncol8 after are weekday,zeroSleep,Nwd,Nwe,..
-Fmer81<-aggregate(.~filename,data=Fmer6[, c(1,B:(Ncol8-1))], mean,na.rm=T,na.action=na.pass) #head
-Fmer82<-aggregate(.~filename,data=Fmer6[,c(1,Ncol8:ncol(Fmer6))], sum,na.rm=T,na.action=na.pass) #tail
+Fmer81<-aggregate(.~filename,data=Fmer6[, c(1,B:(Ncol8-1))], mean,na.rm=T,na.action=na.pass) #a1) head - mean features
+Fmer82<-aggregate(.~filename,data=Fmer6[,c(1,Ncol8:ncol(Fmer6))], sum,na.rm=T,na.action=na.pass) #a2) tail - sum for Nwe, Nwd, weekday etc.
+
+## a3) run get_mean_sd_hour for cmean....
 timingC<-grep("cmean",colnames(Fmer6)) 
-Fmer83<-aggregate(.~filename,data=Fmer6[, c(1,timingC)], get_mean_sd_hour,unit2minute=60,out="mean",na.action=na.pass)  #L5TIME
+Fmer83<-aggregate(.~filename,data=Fmer6[, c(1,timingC)], get_mean_sd_hour,unit2minute=60,out="mean",na.action=na.pass)  #for L5TIME
 if (length(which(Fmer81[,"filename"]!=Fmer83[,"filename"]))>=1) stop("Mismatch IDs in Fmer83")
 timingC<-grep("cmean",colnames(Fmer81)) 
 Fmer81[,timingC]<-Fmer83[,-1]
 head(Fmer81[,timingC])
 
-###b) set mean=NA for those features with Nvalid night< 3 or 7 (output=Fmer81.mask).
+#..b) set mean=NA for those features with Nvalid night< 3 or 7 (output=Fmer81.mask).
 NcountSum<-function(x) sum(as.numeric(!is.na(x))) #calcuate number of good value of each feature
 Fmer81.N<-aggregate(.~filename,data=Fmer6[, c(1,B:(Ncol8-1))], NcountSum,na.action=na.pass) 
 Fmer81.mask<-Fmer81
@@ -378,20 +383,21 @@ dim(Fmer81)
 dim(Fmer82) 
 if (sum(Fmer81[,1]!=Fmer82[,1])>0)  stop("Check IDs of two Fmer8 matrix")
 
-###c) set mean=NA for those features with Nvalid night< 3 or 7 (output=Fmer81.mask).
+#..c) set mean=NA for those features with Nvalid night< 3 or 7 (output=Fmer81.mask).
 Fmer8<-cbind(Fmer81.mask,Fmer82[,-c(1,2)])   # filename,weekday(wrongsum)
 Fmer8[,"cleancode2"]<-rowSums( (is.na(Fmer81.mask)))
 Fmer8.bad<-Fmer81.N[which(Fmer8[,"cleancode2"]>=1),]
 rownames(Fmer8.bad)<-NULL
 write.csv(Fmer8, file=outFN[3],row.names = FALSE )  
 ```  
+ 
 **`r paste("Calculate subject-level mean when Nvalid.night>=",QCnights.feature.alpha[1], " for each feature. Set them as NAs and will be removed in JIVE for ", nrow(Fmer8.bad), " subjects (",length(which(Fmer6[,1] %in% Fmer8.bad[,1]))," days)  as follows,",sep="")`**
  
 
 cleancode2: number of missingness of features of each subject
 
 
-```{r,echo=F}
+```{r c9,echo=F}
 if (nrow(Fmer8.bad)>=1) kable(Fmer8.bad,caption="N valid night of removed subjects for mean features")  %>%
     kable_styling(bootstrap_options = c("striped", "hover"))
 
@@ -405,7 +411,7 @@ if (nrow(Fmer8.bad)>=1) kable(Fmer8.bad,caption="N valid night of removed subjec
 
 #### `r paste("Calculate subject-level SD for Nvalid.nihgt>=",QCnights.feature.alpha[2], " for features",sep="")`
 
-```{r chunk4x-sd,results="hide"}  
+```{r c10,results="hide"}  
  
 
 ###a) Take averages for both subject and day level features although subject feature has same values for all days................ 
@@ -440,7 +446,7 @@ write.csv(Fmer9, file=outFN[4],row.names = FALSE )
 
  
 
-```{r,echo=F}
+```{r c11,echo=F}
 if (nrow(Fmer9.bad)>=1) kable(Fmer9.bad,caption="N valid night of removed subjects for SD features")  %>%
     kable_styling(bootstrap_options = c("striped", "hover"))
 
@@ -449,7 +455,7 @@ if (nrow(Fmer9.bad)>=1) kable(Fmer9.bad,caption="N valid night of removed subjec
 #
 # 6 Output
 
-```{r chunk5,include=FALSE}
+```{r c12,include=FALSE}
 
 library(knitr)
 ansM0<-cbind(outFN[1:A],c("all features by merging Junrui and ggir outputs","Keep sample with valid ENMO inputs","Average variable at the subject level","calculate SD of each feature"))
@@ -488,7 +494,7 @@ kable(ansM,caption="Description of output files")   %>%
 
 # 7 Plot features
 
-```{r chunk7plot,include=FALSE,warning=FALSE, message=FALSE}
+```{r c13,include=FALSE,warning=FALSE, message=FALSE}
  
 t1<-pheno.plot(inputFN=outFN[2],csv=TRUE, start=4)   
 t2<-pheno.plot(inputFN=outFN[3],csv=TRUE, start=4)    

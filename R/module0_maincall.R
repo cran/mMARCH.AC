@@ -317,7 +317,7 @@ annoX<-c("#", ifelse(use.cluster,"#","") ,"","","") # slient mode=0~4
 swline<-paste( annoX,"   cd ",currentdir,"; module load ",Rversion," ;   R --no-save --no-restore --args  < ",studyname,"_module0.maincall.R  ", 0:4,sep="")  
 
 RversionS<-rep(Rversion,length(outFN4_rmd))
-# RversionS[ length(outFN4_rmd)-1]<-"R/3.6.3" #for r.jive package  12-8-23,jive can run on R 4.2.2 now
+# R# versionS[ length(outFN4_rmd)-1]<-"R/3.6.3"      #for r.jive package  12-8-23; now jive can run on R 4.2.2 now
 shlines<-c( "","","",  
            paste("   cd ",currentdir,"; module load ",RversionS," ; R -e \"rmarkdown::render(\'",outFN4_rmd,"\'   )\" ",sep="")   
           )

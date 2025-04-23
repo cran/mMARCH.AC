@@ -33,7 +33,7 @@ n1440<-60*60*24/epochOut
 sleepFull<-read.csv(sleepFN,header=1,stringsAsFactors=F) 
  
 sleepFull[,"filename"]<- gsub(".RData","",sleepFull[,"filename"]) 
-sleepFull[,"Date"]<- format(as.Date(sleepFull[,"calendar_date"],"%d/%m/%Y"), "%Y-%m-%d")  
+sleepFull[,"Date"]<- format(as.Date(sleepFull[,"calendar_date"] ), "%Y-%m-%d")  # 3.2.0 change date format
  
 sleepMatrixH<-sleepFull[,c("filename","Date", "daysleeper", "sleeponset","wakeup")] 
 sleepMatrixH[,"oldDate"]<-sleepMatrixH[,"Date"]

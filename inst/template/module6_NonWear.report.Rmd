@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r ,include=FALSE  }
+```{r c1 ,include=FALSE  }
 currentdir_xxx 
 studyname_xxx
 bindir_xxx
@@ -55,7 +55,7 @@ Complications:
   
  
 
-```{r chunk1,include=FALSE,results="hide"} 
+```{r c2,include=FALSE,results="hide"} 
  
 setwd(currentdir) 
 datadir<-paste(currentdir,"/data",sep="")
@@ -102,7 +102,7 @@ n15=900/epochOut
 
 # Read `r nwFN` file and merge with ID matrix
 
-```{r chunk2}
+```{r c3}
 
 data<-read.csv(paste("./data/",nwFN,sep=""),head=1,stringsAsFactors=F) 
 temp<-gsub("meta_","",data[,"filename"])
@@ -134,7 +134,7 @@ nw.NAs.b<-rowSums(is.na( NW)) *n15  #number of NAs in NW matrix,900s->60s
 
 Among `r nrow(NW)` lines, there are `r length(which(nonwear.mer[, "NonWearMin"]>=1))` lines with Nonwear input. The profit of nonwear status is plotted as below.
 
-```{r c3plot,echo=FALSE, fig.width=10, fig.height=8}
+```{r c4plot,echo=FALSE, fig.width=10, fig.height=8}
   
  
 for (f in 0:1){ 

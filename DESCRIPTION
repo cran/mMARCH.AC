@@ -1,6 +1,6 @@
 Package: mMARCH.AC
-Version: 2.9.4.0
-Date: 2024-8-16
+Version: 3.2.0.0
+Date: 2025-4-23
 Title: Processing of Accelerometry Data with 'GGIR' in mMARCH
 Authors@R: c(
     person(given = "Wei", family = "Guo", 
@@ -26,12 +26,12 @@ Encoding: UTF-8
 ByteCompile: true
 Type: Package
 VignetteBuilder: knitr
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2024-08-22 14:06:36 UTC; guow4
+Packaged: 2025-04-23 14:21:44 UTC; guow4
 Author: Wei Guo [aut, cre],
   Andrew Leroux [aut],
   Vadim Zipunnikov [aut],
   Kathleen Merikangas [aut]
 Repository: CRAN
-Date/Publication: 2024-08-23 04:10:06 UTC
+Date/Publication: 2025-04-23 14:40:02 UTC
