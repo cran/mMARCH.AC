@@ -29,7 +29,7 @@ This R pargram extracts multiple commonly used features from minute level actigr
 For GeneActiv ENMO, we take 1000*ENMO in the counts data.
 
 
-```{r ,include=FALSE  }
+```{r c0,include=FALSE  }
 currentdir_xxx 
 studyname_xxx 
 outputdir_xxx 
@@ -71,7 +71,7 @@ M10windowFN<-paste("./data/clean.impu.flag_All_",studyname,"_ENMO.data.",epochOu
 
 
 
-```{r c1,include=FALSE} 
+```{r c1read,include=FALSE} 
 # 0a) read data-------------------------- 
 
 library(xlsx)   

@@ -1,4 +1,4 @@
-3186ec625fd66bdbd71c289ac49a54c8 *DESCRIPTION
+a3e4d45d427dc339ff42706157f9f9d7 *DESCRIPTION
 b0afb449c2c5b867ae7834b9d1ecea4e *NAMESPACE
 440bce12ddd343378b1edf672d84e317 *R/ActCosinor2.R
 298637be7e791a7aa147bf314214818d *R/ActExtendCosinor2.R
@@ -21,10 +21,10 @@ dfd3ea2987bb5df76f471a112a10f321 *R/r.jive.predict.edit.R
 65810a0cc2a70b31df054b2f549385f4 *R/wear_flag.R
 55dfb32c82596397afe50eb0e44184c4 *README.md
 2902faf63affda43041b604e419d0d8e *build/vignette.rds
-336c61e864d563257cb4df4a69528bb8 *inst/doc/features.dictionary.xlsx
+aecd381cb413d952df43b7f3b612ea07 *inst/doc/features.dictionary.xlsx
 26eab1aff55c2db45294dea4010da0b6 *inst/doc/mMARCH.AC.R
 f62884d2e7078a34d54d9cfa5ad4feac *inst/doc/mMARCH.AC.Rmd
-f43393c2ce568857329e54e2744903c0 *inst/doc/mMARCH.AC.html
+402c2d6f9ed434283cb6c63f3bc01a8d *inst/doc/mMARCH.AC.html
 48d14ee3b6d2d47196adad672df069f9 *inst/doc/mMARCH.AC.output.description.xlsx
 fc74330b2e705ef680f1309a27ef5c18 *inst/doc/quickguide.mMARCH.AC.txt
 79dda480321c0354176c086706d6bd7c *inst/extdata/example/afterGGIR/Example_module0.maincall.R
@@ -38,11 +38,11 @@ d6d0ba4f193759e02089d2c606b7b76a *inst/extdata/example/afterGGIR/module7c_Exampl
 8959885fb96037a61ef16c3f81b4af8f *inst/extdata/example/afterGGIR/readme
 23990696bb8d97b6e8ad22d4c8cd9094 *inst/extdata/example/filename2id.csv
 6e8781e8316a1e27b49682a5696953a3 *inst/template/STUDYNAME_module0.maincall.txt
-336c61e864d563257cb4df4a69528bb8 *inst/template/features.dictionary.xlsx
+e5d54c0069e4d854474ff818753d6caf *inst/template/features.dictionary.xlsx
 11061548cf3db69defde5508b534626d *inst/template/module5_Data_process_report.Rmd
 18e692d747aa9b45d82a11ff678bc43d *inst/template/module6_NonWear.report.Rmd
-4d0bd988b7656e332f7a6c2d298f125d *inst/template/module7a_calculate_newfeatures.Rmd
-7393e150b01e527bc8347c74f3305d7a *inst/template/module7b_merge_GGIRfeatures.Rmd
+bd9e30304ecc43c740bea7c2e784c349 *inst/template/module7a_calculate_newfeatures.Rmd
+37aa51f7ae97b2dd9e18c2d4008b40f7 *inst/template/module7b_merge_GGIRfeatures.Rmd
 55055691c1fb07b46a858850ba4c385c *inst/template/module7c_runJIVE.Rmd
 75c7c0b437426d4b5b2b60670f3acc10 *inst/template/module7d_calculate_WD_WE_avg_features.Rmd
 5fbd2cbc3bfff95d643a4e07fdc382f0 *man/ActCosinor2.Rd
