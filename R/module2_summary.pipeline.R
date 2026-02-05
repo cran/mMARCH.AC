@@ -180,6 +180,7 @@ write.xlsx(ansM, file=BDfn, sheetName = "2_fileSummary",   col.names = TRUE, row
 ##########################################################################################################  
 # (2)  read  /part2_daysummary.csv
 # bug: colasu has two input for same day on id=6088
+# inFN3[2]= "/vf/users/guow4/ProjectX2_2021/0_mMARCH_actigraph/GGIR3.3.2/NIMH/GGIR/output_Bin11052020/results/part2_daysummary.csv" 
 ##########################################################################################################  
    
 message("2) read part2 day summary file")
@@ -189,21 +190,20 @@ colnames(d)[which(colnames(d) %in% c("id","ID"))]<-"id"   #6/1/2020 ggir2.0 id->
 nlast<-ncol(d)
 
 message(c(inFN3[2], dim(d)))
-dcopy<-d[order(d[,5],decreasing=TRUE),] # keep good Vhour 
-S0<-which(duplicated(paste(dcopy[,2],substr(dcopy[,3],1,10),sep="@")) )   #duplicated(c(1,1,1))= FALSE  TRUE  TRUE
-part2.rmDup_ids<-paste(dcopy[S0,2],dcopy[S0,3],sep="@")
+dcopy<-d[order(d[,"N.valid.hours"],decreasing=TRUE),] # keep good Vhour 
+S0<-which(duplicated(paste(dcopy[,"filename"],substr(dcopy[,"calendar_date"],1,10),sep="@")) )   #duplicated(c(1,1,1))= FALSE  TRUE  TRUE
+part2.rmDup_ids<-paste(dcopy[S0,"filename"],dcopy[S0,"calendar_date"],sep="@")
  
 
 #  check duplicates and check id match
-dim(d)
-d[1,1:10]
-dim(unique(d[,c(2,3)]))
-length(unique(d[,1]))
-length(unique(d[,2]))
+dim(d) 
+dim(unique(d[,c("filename","calendar_date")]))
+length(unique(d[,"id"]))
+length(unique(d[,"filename"]))
 
-fn.cd<-paste(d[,2],d[,3],sep="@")
+fn.cd<-paste(d[,"filename"],d[,"calendar_date"],sep="@")
 d[,"fn.cd"]<-fn.cd 
-d[,"newID"]<-unlist(lapply(d[,2],filename2id)) 
+d[,"newID"]<-unlist(lapply(d[,"filename"],filename2id)) 
 S1<-which(fn.cd %in% part2.rmDup_ids)
 if (length(S1)>=1) d<-d[-S1,]   # remove  "6088__027632_2017-02-23 13-05-03.bin@2017-02-06T17:14:55+0100" 
 
@@ -212,9 +212,7 @@ t<-sort(table(fn.cd),decreasing=TRUE)
 dupid<-names(t)[which(t>=2)] 
  
 dim(d)
-dim(unique(d[,c(2,3)]))
-length(unique(d[,1]))
-length(unique(d[,2]))
+dim(unique(d[,c("filename","calendar_date")])) 
 length(unique(d[,"newID"]))
 
 idM<-unique(d[,c("filename","newID")])
@@ -228,7 +226,7 @@ BD<-cbind(BD,DuplicateIDs)
 
 
 # table(d[,1])
-if (numericID) {d.iderror<-d[which(d[,1]!=as.numeric(d[,"newID"])),]} else {  
+if (numericID) {d.iderror<-d[which(d[,"id"]!=as.numeric(d[,"newID"])),]} else {  
 d.iderror<-d[which( gsub(" ", "", x=d[,1], fixed = TRUE)!=as.character(unlist(d[,"newID"]))),] }
 message(typeof(d))
  
@@ -381,7 +379,8 @@ for (i in 1:length(idlist)){
 # (8)   Day sleeper (pay attention to date format for part2 and part4)
 #  merge sleep.full report for the purpose of (1) define daysleeper (2) sleep Matrix for PA_dur calculation
 # if using clean file, daysleeper=1 : mark; missing will be removed so daysleeper does not matter 
-# part2 .bin calendar_date =2017-10-31T05:15:00-0400;  part4 .bin.RData calendar_date=16/9/2010
+# Before 2.9.2: part2 .bin calendar_date =2017-10-31T05:15:00-0400;  part4 .bin.RData calendar_date=16/9/2010
+# after 2.9.2: part4 calendar_date=2017-11-28
 ##########################################################################################################  
 message(paste("6) Mark day sleeper from ",sleepFull.fn,sep=""))
  
@@ -393,7 +392,7 @@ if (length(idsdate)>=1 )  stop(paste("Found duplicate days in part4_nightsummary
 
 
 colnames(part4)[which(colnames(part4) %in% c("id","ID"))]<-"id"   #6/1/2020 ggir2.0 id->ID
-part4[,"Date"]<- format(as.Date(part4[,"calendar_date"],"%d/%m/%Y"), "%Y-%m-%d")
+part4[,"Date"]<- NormalizeGGIRDate(part4[,"calendar_date"]) 
 part4[,"filename"]<- gsub(".RData","",part4[,"filename"]) 
 part4[,"daysleeper_ggir"]<-part4[,"daysleeper"] 
 part4[,"daysleeper"]<-0
@@ -401,7 +400,7 @@ S4<-which(part4[,"sleeponset"]<36 & part4[,"wakeup"]>36)
 if (length(S4)>=1) part4[S4,"daysleeper"]<-1
 message(table(part4[,c("daysleeper_ggir","daysleeper")]))
 
-d[,"Date"]<-substr(d[,"calendar_date"],1,10)  
+d[,"Date"]<-NormalizeGGIRDate(d[,"calendar_date"] )  
 d2 <-merge(d,part4,by=c("filename","Date"),suffix=c("",".2"),all=TRUE)  #filename+ calendar_date 
 
  

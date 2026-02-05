@@ -1,7 +1,7 @@
 ---
 title: 'mMARCH.AC module 5: Data Processing and Exploratory Data Analysis with GGIR output'
 author: "Wei Guo"
-date: "2023-07-07"
+date: "2025-04-24"
 output:
   html_document:
     df_print: paged
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-```{r important_steps_in_QC,eval=F,include=F}
+```{r c1_important_steps_in_QC,eval=F,include=F}
 part2_summary.pipeline.R
  
    S4<-which(part4[,"sleeponset"]<36 & part4[,"wakeup"]>36)
@@ -38,7 +38,7 @@ part4_data_imputation.R:
   KEEP[which(is.na(idM[,"newID"]) | idM[,"remove16h7day"]==1 | idM[,"duplicate"]=="remove" |  ImpuMiss.a>=1 )]<-"remove"  
 ```
 
-```{r ,include=FALSE  }
+```{r c2,include=FALSE  }
 currentdir="/data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/example/afterGGIR"
 studyname="Example"
 bindir=""
@@ -67,7 +67,7 @@ RemoveDaySleeper=FALSE
    
 
 
-```{r c1 ,include=FALSE } 
+```{r c3 ,include=FALSE } 
 
 setwd(currentdir)  
 library(xlsx)   
@@ -101,7 +101,7 @@ Note. Nid(BinFiles) is the number of unique bin files instead of number of subje
 `r D2.story` 
 
 
-```{r c2, echo=FALSE,results='asis' } 
+```{r c4, echo=FALSE,results='asis' } 
  
 kable(D1,caption="Table 1: Basic information"  ) 
 kable(D2[,-1],caption="Table 2: Summary of GGIR output")
@@ -112,7 +112,7 @@ kable(D2[,-1],caption="Table 2: Summary of GGIR output")
    +  daysleeper (sleep period did overlap with noon, i.e. onset<36,wakeup>36)
 
 
-```{r c3,echo=FALSE,fig.width=10,fig.height=4 }   
+```{r c5,echo=FALSE,fig.width=10,fig.height=4 }   
 E<-read.csv(summaryFN2,head=1,stringsAsFactors=F)
 par(mfrow=c(1,3))  
 hist(E[,"sleeponset"],xlab="sleeponset",main=NULL,col="red")
@@ -134,7 +134,7 @@ kable(daysleeperM,caption="Problem of daysleeper of GGIR")
  
 # 3. Check duplicate samples
 
-```{r c1read ,include=FALSE } 
+```{r c6read ,include=FALSE } 
  
 D3<-read.xlsx(summaryFN1,head=1,sheetName = sheetName[3])  
 if (ncol(D3)>=2) { 
@@ -161,7 +161,7 @@ D3.story2<-""
 Valid day was defined as >=`r QChours.alpha` valid hours. The number of days/missing days are plotted based on GGIR-part2 output. In GGIR script,  if idloc = 1 (default) the code assumes that ID number is stored in the obvious header field. However, it might be inconsistent with the filenames. Therefore, please do not use this column if ID errors were found.
   
  
-```{r c3nvaild, echo=FALSE , warning=F,message=F, fig.width=10, fig.height=10} 
+```{r c7nvaild, echo=FALSE , warning=F,message=F, fig.width=10, fig.height=10} 
 D9<-read.xlsx(summaryFN1,head=1,sheetName = sheetName[9])   
 #dim(D9) ;head(D9)  
 par(mfrow=c(2,2))
@@ -190,7 +190,7 @@ Value = 1 indicates imputation.
 More details could be found `r paste( currentdir,"/data/",studyname,"_NonWear*csv/pdf",sep="")`, in which the nonwear time was shown/plotted on each day for each subject. GGIR will impute the data for nonwear time using the subject mean if you set up impute=TRUE when you run GGIR and save the imputed data into the csv files.
 
 
-```{r c4plotNday, echo=FALSE,  fig.width=10, fig.height=5}
+```{r c8plotNday, echo=FALSE,  fig.width=10, fig.height=5}
  
 nwFN<-paste(currentdir,"/data/", "plot.nonwearVSnvalidhours.csv",sep="")
 data<-read.csv(nwFN,head=1,stringsAsFactors=FALSE)   
@@ -211,7 +211,7 @@ hist(data2[,2]/4,  xlab="Subject mean of NonWear hours" , col="orange",main="")
 ## Missing Pattern 
 We would like to check missing pattern and exam the missingness for each sample.
 
-```{r c5missing, echo=FALSE,  warning=FALSE,message=FALSE,fig.width=10, fig.height=5}
+```{r c9missing, echo=FALSE,  warning=FALSE,message=FALSE,fig.width=10, fig.height=5}
   
 E<-read.csv(summaryFN2,head=1,stringsAsFactors=F)
 par(mfrow=c(1,2))  
@@ -236,16 +236,17 @@ try( barplot(t2,xlab="ith day is missing",col="pink" ) )
 
 Check missing pattern of each sample. Most missingness are expected on the first and last day. 
 
-```{r c6plotmissing, echo=FALSE ,fig.width=10,fig.height=5}  
+```{r c10plotmissing, echo=FALSE ,fig.width=10,fig.height=5,warning=FALSE,message=FALSE,error=FALSE}  
 par(mfrow=c(1,1)) 
 t6<- table(D9[,"misspattern"])  
 par(mai=c(1.02,4.52,0.82,0 )) # bottom,left,up,right
-barplot(t6,main="missing pattern (f>=5)",horiz=TRUE,las=2,col="blue")
+# barplot(t6,main="missing pattern (f>=1)",horiz=TRUE,las=2,col="blue")
+
 if (length(t6)>=20) {t6<-t6[t6>=5] 
-barplot(t6,main="missing pattern (f>=5)",horiz=TRUE,las=2,col="blue") 
-barplot(t6[t6<max(t6)],main="missing pattern (f>=5) - zoom in",horiz=TRUE,las=2,col="green") #remove max
-} else barplot(t6,main="missing pattern",horiz=TRUE,las=2,col="blue") 
-   
+if (length(t6)>=1){
+try(barplot(t6,main="missing pattern (f>=5)",horiz=TRUE,las=2,col="blue") )
+try(barplot(t6[t6<max(t6)],main="missing pattern (f>=5) - zoom in",horiz=TRUE,las=2,col="green"))  #remove max
+}} else try(barplot(t6,main="missing pattern",horiz=TRUE,las=2,col="blue"))  
 ```
    
 
@@ -265,7 +266,7 @@ Under the  `r paste( currentdir,"/data/",  sep="")` directory,
  
  
 
-```{r c21ansM , echo=FALSE }  
+```{r c11ansM , echo=FALSE }  
   
 summaryFN1<-paste(currentdir,"/summary/",studyname,"_ggir_output_summary.xlsx",sep="")
 summaryP2<-read.xlsx( summaryFN1,head=0,sheetName = "2_fileSummary")  
@@ -353,7 +354,7 @@ hour.line.at=which(colnames(hTAC) %in% hour.labels)
 # 6. Exploratory Data Analysis
 
 
-```{r C5data , echo=FALSE }  
+```{r c12data , echo=FALSE }  
 # started with clean/imputed/shrink data to run Vadim's plot
 dataclean<-D[ which(D[,"KEEP"]=="keep" & !is.na(D[,"newID"]) ),] 
 Ctop=which(colnames(dataclean) %in% c("00:00:00","X00.00.00"))-1  
@@ -388,7 +389,7 @@ hour.line.at=which(colnames(hTAC) %in% hour.labels)
  
 
   
-```{r fig1, echo=FALSE, message = F, warning = F, fig.width= 10,fig.height=5}
+```{r c13fig1, echo=FALSE, message = F, warning = F, fig.width= 10,fig.height=5}
  
 
 ## plot all profiles for ``r n.row`` ``r studyname`` samples.
@@ -402,7 +403,7 @@ abline(v = hour.line.at, col = "gray", lty = "dotted")
 ```
  
 
-```{r fig2, echo=FALSE, message = F, warning = F, fig.width= 10,fig.height=5} 
+```{r c14fig2, echo=FALSE, message = F, warning = F, fig.width= 10,fig.height=5} 
 ## plot all profiles   
 LhTAC.mean <- apply(LhTAC, 2, mean, na.rm=T)
 LhTAC.sd <- apply(LhTAC, 2, sd, na.rm=T) 
@@ -434,7 +435,7 @@ Marginal info: **hour-specific means and standard deviations**
 
  
 
-```{r fig3,echo = F, warning = F, message = F, fig.width=10, fig.height=5} 
+```{r c15fig3,echo = F, warning = F, message = F, fig.width=10, fig.height=5} 
 par(mfrow=c(1,2))
 require("fields") 
 x.range24=x.range/length(x.range)*24 
@@ -449,7 +450,7 @@ image.plot(x=x.range24,y=x.range24,z = LhTAC.cor, xlab = "Hour", ylab = "Hour",m
 ## 6.3)  Principal Component Analysis   
   + Step 1: De-mean all diurnal profiles
 
-```{r fig4,echo = F, warning = F, message = F, fig.width=10, fig.height=5,eval=FALSE}
+```{r c16fig4,echo = F, warning = F, message = F, fig.width=10, fig.height=5,eval=FALSE}
  
 
 # create de-meaned diurnal profiles
@@ -474,7 +475,7 @@ abline(v = hour.line.at, col = "gray", lty = "dotted")
 
   + Step 2: Find "principal" patterns that explain largest proportion of total variation 
 
-```{r fig5.0,echo = FALSE, warning = F, message = F, fig.width=10, fig.height=5,eval=FALSE}
+```{r c17fig5.0,echo = FALSE, warning = F, message = F, fig.width=10, fig.height=5,eval=FALSE}
 
 LhTAC.demean = LhTAC - matrix(apply(LhTAC, 2, mean,na.rm=TRUE), n.row, ncol(LhTAC), byrow = TRUE)
 LhTAC.cov = cov(LhTAC.demean,use="pairwise.complete.obs") 
@@ -485,7 +486,7 @@ abline(v = x.range, col = "gray", lty = "dotted")
 ```
  
 
-```{r fig6, echo = F, warning = F, message = F, fig.width=10, fig.height=5}
+```{r c18fig6, echo = F, warning = F, message = F, fig.width=10, fig.height=5}
 require(fields)
  
 set.seed(1) 
@@ -507,7 +508,7 @@ lambda.per<-   round(100* lambda /sum(lambda),2)
      - PC3 explains ``r lambda.per[3]``% of total variation  
  
 
-```{r fig7,echo = F, warning = F, message = F, fig.width=10, fig.height=5}
+```{r c19fig7,echo = F, warning = F, message = F, fig.width=10, fig.height=5}
 LhTAC.demean = LhTAC - matrix(apply(LhTAC, 2, mean,na.rm=TRUE), n.row, ncol(LhTAC), byrow = TRUE)
 LhTAC.cov = cov(LhTAC.demean,use="pairwise.complete.obs")
 s = eigen(LhTAC.cov, symmetric = T)  
@@ -545,7 +546,7 @@ R package "denseFLMM" performs functional PCA with repeat measure
 
 
 
-```{r,echo=FALSE,  warning = F, message = F}
+```{r c20,echo=FALSE,  warning = F, message = F}
 require(denseFLMM) 
 id.groups<-unique(hTAC.idm[,"filename"])   
 groups<-NULL

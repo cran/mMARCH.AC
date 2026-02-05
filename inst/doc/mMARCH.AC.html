@@ -12,7 +12,7 @@
 
 <meta name="author" content="Wei Guo" />
 
-<meta name="date" content="2025-04-24" />
+<meta name="date" content="2026-02-05" />
 
 <title>mMARCH.AC: An Open-Source R/R-Markdown Package for Processing of Accelerometry Data with GGIR in Motor Activity Research Consortium for Health (mMARCH)</title>
 
@@ -567,7 +567,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 Package for Processing of Accelerometry Data with GGIR in Motor Activity
 Research Consortium for Health (mMARCH)</h1>
 <h4 class="author">Wei Guo</h4>
-<h4 class="date">April 24, 2025</h4>
+<h4 class="date">February 05, 2026</h4>
 
 
 
@@ -2205,7 +2205,7 @@ Sleep Midpoint = (sleeponset + wakeup)/2.
 day
 </td>
 <td style="text-align:left;">
-GGIR-part4
+GGIR-part4*
 </td>
 </tr>
 <tr>
@@ -2220,7 +2220,7 @@ the fraction of time spent asleep in the Sleep Period Time window.
 day
 </td>
 <td style="text-align:left;">
-GGIR-part4
+GGIR-part4*
 </td>
 </tr>
 <tr>
@@ -2263,6 +2263,52 @@ day
 </td>
 <td style="text-align:left;">
 GGIR-part5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+WASO
+</td>
+<td style="text-align:left;">
+Wake After Sleep Onset: SptDuration - SleepDurationInSpt
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+GGIR-part4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SleepRegularityIndex1
+</td>
+<td style="text-align:left;">
+The Sleep Regularity Index inspired by Phillips et al. 2017, but
+calculated per day-pair to enable user to study patterns across days,
+and calculated based on sustained inactivity bouts.
+</td>
+<td style="text-align:left;">
+day
+</td>
+<td style="text-align:left;">
+GGIR-part4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SleepRegularityIndex2
+</td>
+<td style="text-align:left;">
+The Sleep Regularity Index inspired by Phillips et al. 2017, but
+calculated per day-pair to enable user to study patterns across days,
+and calculated based on classified naps and sleep. 
+</td>
+<td style="text-align:left;">
+subject
+</td>
+<td style="text-align:left;">
+GGIR-part6
 </td>
 </tr>
 </tbody>
@@ -3231,7 +3277,7 @@ Source
 <tbody>
 <tr>
 <td style="text-align:left;">
-L5TIME_num
+L5hr_ENMO_mg_0.24hr
 </td>
 <td style="text-align:left;">
 Timing of least active 5 hours
@@ -3240,12 +3286,12 @@ Timing of least active 5 hours
 day
 </td>
 <td style="text-align:left;">
-GGIR-part5
+GGIR-part2
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-M10TIME_num
+M10hr_ENMO_mg_0.24hr
 </td>
 <td style="text-align:left;">
 Timing of most active 10 hours
@@ -3254,12 +3300,12 @@ Timing of most active 10 hours
 day
 </td>
 <td style="text-align:left;">
-GGIR-part5
+GGIR-part2
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-L5VALUE
+L5_ENMO_mg_0.24hr
 </td>
 <td style="text-align:left;">
 Average acceleration value (mg) of least active 5 hours
@@ -3268,12 +3314,12 @@ Average acceleration value (mg) of least active 5 hours
 day
 </td>
 <td style="text-align:left;">
-GGIR-part5
+GGIR-part2
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-M10VALUE
+M10_ENMO_mg_0.24hr
 </td>
 <td style="text-align:left;">
 Average acceleration value (mg) of most active 10 hours
@@ -3282,7 +3328,7 @@ Average acceleration value (mg) of most active 10 hours
 day
 </td>
 <td style="text-align:left;">
-GGIR-part5
+GGIR-part2
 </td>
 </tr>
 <tr>
@@ -3297,7 +3343,7 @@ activity and RA_ggir = (M10VALUE-L5VALUE)/(M10VALUE+L5VALUE).
 day
 </td>
 <td style="text-align:left;">
-GGIR-part5
+GGIR-part2*
 </td>
 </tr>
 <tr>
@@ -4062,10 +4108,10 @@ Intra-daily variability measures fragmentation in the rest/activity
 rhythms.
 </td>
 <td style="text-align:left;">
-day
+subject
 </td>
 <td style="text-align:left;">
-GGIR-part2
+GGIR-part6
 </td>
 </tr>
 <tr>
@@ -4080,7 +4126,7 @@ rhythms between different days.
 subject
 </td>
 <td style="text-align:left;">
-GGIR-part2
+GGIR-part6
 </td>
 </tr>
 <tr>

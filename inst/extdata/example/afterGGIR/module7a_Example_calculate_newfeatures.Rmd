@@ -1,7 +1,7 @@
 ---
 title: 'mMARCH.AC module 7a: Extracts Features of Domains of Physical Activity, Sleep and Circadian Rhythmicity '
 author: "Wei Guo"
-date: "2023-07-07"
+date: "2025-04-24"
 output:
   html_document:
     df_print: paged
@@ -29,7 +29,7 @@ This R pargram extracts multiple commonly used features from minute level actigr
 For GeneActiv ENMO, we take 1000*ENMO in the counts data.
 
 
-```{r ,include=FALSE  }
+```{r c0,include=FALSE  }
 currentdir="/data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/example/afterGGIR"
 studyname="Example"
 outputdir="/data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/example/GGIR/output_binfile"
@@ -71,7 +71,7 @@ M10windowFN<-paste("./data/clean.impu.flag_All_",studyname,"_ENMO.data.",epochOu
 
 
 
-```{r x1,include=FALSE} 
+```{r c1read,include=FALSE} 
 # 0a) read data-------------------------- 
 
 library(xlsx)   
@@ -120,6 +120,8 @@ colnames(log.count)<-c("ID","Day",paste("MIN",1:n1440,sep=""))
 
 wear<-count 
 for (j in 3:ncol(wear)) wear[,j]<-1 
+
+write.csv(D3,file=outenmoFN,row.names=FALSE) 
 ```
 
 # Define sleep window for PA counts  
@@ -130,7 +132,7 @@ for (j in 3:ncol(wear)) wear[,j]<-1
    + clean data and sleepMatrix were wrote to the data folder
  
 
-```{r x2, results="hide",warning=FALSE,message=FALSE} 
+```{r c2, results="hide",warning=FALSE,message=FALSE} 
 sleepFull.fn<-paste(outputdir,"/results/QC/part4_nightsummary_sleep_full.csv",sep="")  
 sleepCall<-makeSleepDataMatrix(sleepFN=sleepFull.fn,epochOut=60,impute=TRUE,outputFN=outsleepFN)  
 ```
@@ -143,7 +145,7 @@ sleep.story<-paste("Among ",nrow(D1)," nights, there are ",length(which(D1[,"day
  
 **Messages from the sleep data**
  
-```{r,echo=FALSE,message=F} 
+```{r c3,echo=FALSE,message=F} 
 message<-"" 
 library(kableExtra)  
 
@@ -166,7 +168,7 @@ if (length(sleepCall$sleepproblem)>1) {
  
  
 
-```{r x4,include=FALSE  }
+```{r c4,include=FALSE  }
 # 0c) # Match ids from sleep file-------------------------
 sleep<-read.csv(outsleepFN,head=1,stringsAsFactors=F)
 sleepH<-sleep[,c("filename","Date")]
@@ -239,7 +241,7 @@ Sleep features (which may rely on addtional algorithms) will be implemented in t
 Total volumen of physical activity serves as a proxy for the total amount of accumulated physical activity over a day. Commonly used features of total volume are total activity count TAC$=\sum_{wear}y(t)$, and total log transformed activity count TLAC$=\sum_{wear}\log(`r log.multiplier` \times y(t) + 1)$. The `Tvol` function calculate either TAC or TLAC (depending on the argument `logtransform`) provided the count data.
 
 
-```{r chunk21} 
+```{r c5} 
 tac24 = Tvol2(count.data = count, weartime = wear,logtransform = FALSE)  #wear has all 1s for 24 hours
 tlac24 = Tvol2(count.data = log.count,weartime = wear,logtransform = FALSE)  
 colnames(tac24)[3]<-"TAC_24h"
@@ -274,7 +276,7 @@ It is sometimes of interest to look at time spent in a certain state during a da
    +  `r paste("vigorous time in minutes was defined as ENMO>",PA.threshold[3],"mg",sep="") `.
    +  sleep window was removed from the physical activity duration calculation by set weartime=nonsleepMatrix in Time_long2().
  
-```{r chunk25x_earlier_for_PAinM10, include=FALSE}   
+```{r c6, include=FALSE}   
 ra_all = RA_long2(count.data = count, window=(ncol(count)-2)/1440, method = "average",noon2noon=FALSE) # one minute window  
 ra_M10<-ra_all[,c("ID","Day","M10TIME")]
 ra_M10[,"M10TIME"] <-ra_M10[,"M10TIME"]-5 #back to start time of M10 as before
@@ -309,7 +311,7 @@ write.csv(M10windowMatrix,file=M10windowFN,row.names=FALSE)
 
 **Calculation activity duration based on  Day time (nonsleep)/ M10 window / 24 hours**
 
-```{r chunk22b}  
+```{r c7}  
 sed_allA<-PAfun(count.data=count,weartime = nonsleepMatrix,PA.threshold) 
 sed_allB<-PAfun(count.data=count,weartime = M10windowMatrix,PA.threshold) 
 sed_allC<-PAfun(count.data=count,weartime = wear,PA.threshold)  
@@ -320,7 +322,7 @@ sed_all<-merge(sed_all,sed_allC,by=c("ID","Day"),all=TRUE,suffix=c("","_24h"))
 
   * `r paste("dim(sed_all) = ",dim(sed_all)[1],"X",dim(sed_all)[2],sep="")`     
  
-```{r chunk22c}  
+```{r c8}  
 sed_allA2<-PAfun(count.data=count,weartime = nonsleepMatrix,PA.threshold2) 
 sed_allB2<-PAfun(count.data=count,weartime = M10windowMatrix,PA.threshold2) 
 sed_allC2<-PAfun(count.data=count,weartime = wear,PA.threshold2)  
@@ -333,7 +335,7 @@ colnames(sed_all2)[-c(1,2)]<-paste(colnames(sed_all2)[-c(1,2)],"_C2",sep="") #ne
   * `r paste("dim(sed_all2) = ",dim(sed_all2)[1],"X",dim(sed_all2)[2],sep="")`    
 
 
-```{r 6plotEach, echo=FALSE , fig.width=10, fig.height=3}  
+```{r c9, echo=FALSE , fig.width=10, fig.height=3}  
 par(mfrow=c(1,6)) 
 for (j in 3:ncol(sed_all)) hist(sed_all[,j],main="",xlab=colnames(sed_all)[j]) 
 # dim(sed_allA)
@@ -370,7 +372,7 @@ We can calculate the above mentioned metrics for both sedentary and active bout.
 
 Given all the activity and wear/nonwear flag data for the whole dataset, user can choose to calcualte framentation at daily level, or aggregate bouts across all available days by choosing from either "subject" and "day" for the argument `by`:
 
-```{r chunk23,warning=FALSE,message=FALSE}
+```{r c10,warning=FALSE,message=FALSE}
 frag_by_subject = fragmentation_long2(count, weartime = wear,thresh=PA.threshold[1], metrics = "all",by = "subject")
 frag_by_day = fragmentation_long2(count, weartime = wear,thresh=PA.threshold[1], metrics ="all",by = "day")
 ```
@@ -380,7 +382,7 @@ frag_by_day = fragmentation_long2(count, weartime = wear,thresh=PA.threshold[1],
     `r paste("dim(frag_by_day) = ",dim(frag_by_day)[1],"X",dim(frag_by_day)[2],sep="")`     
 ``` 
 
-```{r plot23, echo=FALSE , fig.width=10, fig.height=8} 
+```{r c11, echo=FALSE , fig.width=10, fig.height=8} 
 par(mfrow=c(2,10)) 
 par(mai=c(0.82,0.42,0.42,0 )) # bottom,left,up,right
 
@@ -395,7 +397,7 @@ The upper panel is for subject-level and the lower panel is for day-level.
 The classic cosinor model is defined as $r(t)= mes + amp \times c(t)$ where $c(t) = \cos([t-\phi]2\pi/24)$ where mes is mesor, amp is amplitude, $\phi$ is the acrophase.  It is suggested to log transformed the curve  
  
 
-```{r chunk24,results="hide"}  
+```{r c12,results="hide"}  
 minuteW=(ncol(count)-2)/1440  #window size (Number of columuns) for one minute
 Cos = ActCosinor_long2( count.data = count, window=minuteW,daylevel=FALSE)  
 Cos.log = ActCosinor_long2( count.data = log.count, window=minuteW,daylevel=FALSE)   
@@ -418,7 +420,7 @@ colnames(cosinormodel)[-1]<-paste(colnames(cosinormodel)[-1],"_S",sep="")
  
 
 
-```{r chunk24day,results="hide"}  
+```{r c13,results="hide"}  
 minuteW=(ncol(count)-2)/1440
 Cos.day = ActCosinor_long2( count.data = count, window=minuteW,daylevel=TRUE)  
 Cos.day.log = ActCosinor_long2( count.data = log.count, window=minuteW,daylevel=TRUE)    
@@ -438,7 +440,7 @@ cosinormodel.day<-merge(cosinormodel.day.1[,-3],cosinormodel.day.2[,-3],by=c("ID
  
 
  
-```{r plot24, echo=FALSE , fig.width=10, fig.height=3} 
+```{r c14, echo=FALSE , fig.width=10, fig.height=3} 
 par(mfrow=c(1,9) )
 if (ncol(cosinormodel)>=4) par(mai=c(0.82,0.42,0.42,0 )) else par(mai=c(0.82,0.42,0.42,0.4 ))  # bottom,left,up,right 
 for (j in 2:ncol(cosinormodel)) boxplot(as.numeric(as.character(cosinormodel[,j])),xlab=colnames(cosinormodel)[j])  
@@ -463,7 +465,7 @@ M10TIME | Start time of the highest acceleration value of the highest accelerati
 For a single vector,
 
  
-```{r chunk25,eval=TRUE,warning=F,message=F,results="hide"}   
+```{r c15,eval=TRUE,warning=F,message=F,results="hide"}   
 iv_all = IV_long2(count.data = count, window=(ncol(count)-2)/144, method = "average") #10 minutes window
 colnames(iv_all)[3]<-"IV" 
 
@@ -481,7 +483,7 @@ colnames(ra_all_NN)[-(1:2)]<-paste(colnames(ra_all_NN)[-(1:2)],"_NN",sep="")
   * `r paste("dim(ra_all) = ",dim(ra_all)[1],"X",dim(ra_all)[2],sep="")`     
   * `r paste("dim(is_all) = ",dim(is_all)[1],"X",dim(is_all)[2],sep="")`    
 
-```{r plot25, echo=FALSE , fig.width=10, fig.height=4} 
+```{r c16, echo=FALSE , fig.width=10, fig.height=4} 
 par(mfrow=c(1,7)) 
 par(mai=c(0.82,0.42,0.42,0.4 )) # bottom,left,up,right 
 boxplot(iv_all[,"IV"],xlab="IV")
@@ -536,7 +538,7 @@ As opposed to Cosinor/extCosinor model, functional principal component analysis 
 
 Notice that, here, for simplicity and better interpretability, for each subject, we take the average across all valid days, therefore, we don't account for the within person correlation. To incorporate the within person correlation, one can choose to use multilevel FPCA by using the `denseFLMM` function in the denseFLMM package.
 
-```{r chunk26,include=FALSE}
+```{r c17,include=FALSE}
 ######################################################### 
 # 2.6 functional principal component analysis
 
@@ -661,7 +663,7 @@ write.csv(subject_PCs, file=foutFN("5_denseFLMM_subject_PCs",studyname), col.nam
 ```
 
 
-```{r subPCs, echo=FALSE  } 
+```{r c18, echo=FALSE  } 
 #first 4 subject-level PCs----------------------------
  
 m<-4

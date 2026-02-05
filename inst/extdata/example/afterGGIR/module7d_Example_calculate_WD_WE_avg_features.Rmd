@@ -1,7 +1,7 @@
 ---
 title: 'mMARCH.AC module 7d: Extracts Weekends/Weekday Features of Domains of Physical Activity, Sleep and Circadian Rhythmicity '
 author: "Wei Guo"
-date: "2023-07-07"
+date: "2025-04-24"
 output:
   html_document:
     df_print: paged
@@ -67,7 +67,7 @@ SL    | Mon, Tue, Wed, Thurs, Sun if the next day is not a holiday | Fri (Friday
 Please note that Sunday night sleeponset is counted as weekday but Friday night sleeponset is counted as weekends under the current definition.
 
 
-```{r holidayWE,include=FALSE} 
+```{r c1holidayWE,include=FALSE} 
 # Issue: Sunday night sleeponset is counted as weekday; Friday night sleeponset is counted as weekends under current definition.
 # find "wd" and "we" days/nights with/without extra holidayFN as input (twin study)
 holidayplusweekends<-function(feature,holidayFN=NULL){ 
@@ -115,7 +115,7 @@ return(ans)
  
   
 
-```{r c1data,include=FALSE} 
+```{r c2data,include=FALSE} 
 library(xlsx)   
 library(knitr) 
 library(dplyr)  # %>%
@@ -191,7 +191,7 @@ The activity data at the minute level (`r enmoFN`) was stored in a format of `da
      *  WD Count data = (`r dim(count.wd)`), `r length(unique(count.wd[,"ID"]))` individuals.  
      *  WE Count data = (`r dim(count.we)`), `r length(unique(count.we[,"ID"]))` individuals.  
 
-```{r preC3,echo=FALSE}
+```{r c3,echo=FALSE}
 MustHaveTAC<-TRUE
 A=4  #  number of head columns including 1: filename 2: Date 3:newID 4:cleaningcode 
 B=A+1 #first column need to average 
@@ -214,14 +214,14 @@ B=A+1 #first column need to average
 ### 2.4 cosinor model
 The classic cosinor model is defined as $r(t)= mes + amp \times c(t)$ where $c(t) = \cos([t-\phi]2\pi/24)$ where mes is mesor, amp is amplitude, $\phi$ is the acrophase. 
 
-```{r text,include=FALSE}
+```{r c4,include=FALSE}
 # Extended cosinor model allows for two additional parameters to control the shape. Here we implement the anti logistic transformation, and have $r(t) = min +amp\times F(c(t))$, where $F()$ is the anti logistic function.
 
 
 # `ExtCos` and `ExtCos_long` calcualte the five parameters, (for a single vector amd whole dataset respectively). It is suggested to log transformed the curve by choose `logtransform = TRUE`. 
 ```
 
-```{r chunk24wd,results="hide"}  
+```{r c5,results="hide"}  
 minuteW=(ncol(count.wd)-2)/1440
 Cos = ActCosinor_long2( count.data = count.wd, window=minuteW,daylevel=FALSE)  
 Cos.log = ActCosinor_long2( count.data = log.count.wd, window=minuteW,daylevel=FALSE)   
@@ -240,7 +240,7 @@ colnames(cosinormodel.wd)[2:ncol(cosinormodel.wd)]<-paste(colnames(cosinormodel.
 
 
 
-```{r chunk24we,results="hide"}  
+```{r c6we,results="hide"}  
 minuteW=(ncol(count.we)-2)/1440
 Cos = ActCosinor_long2( count.data = count.we, window=minuteW,daylevel=FALSE)  
 Cos.log = ActCosinor_long2( count.data = log.count.we, window=minuteW,daylevel=FALSE)   
@@ -261,14 +261,14 @@ colnames(cosinormodel.we)[2:ncol(cosinormodel.we)]<-paste(colnames(cosinormodel.
 
 ### 2.5  interdaily statbility
 
-```{r chunk25}   
+```{r c7}   
 is_all.wd = IS_long2(count.data = count.wd, window=(ncol(count)-2)/144, method = "average"  )  #10 minute  
  colnames(is_all.wd)[2]<-"IS_wd"  
 is_all.we = IS_long2(count.data = count.we, window=(ncol(count)-2)/144, method = "average"  )  #10 minute  
  colnames(is_all.we)[2]<-"IS_we"   
 ```
 
-```{r chunk24x, include=FALSE}  
+```{r c8, include=FALSE}  
 
 # subject level features: cosinor model, IS
 
@@ -289,7 +289,7 @@ colnames(plot.data)<-colnames(output)[-c(1,2)]
 plot.data<-plot.data[,order(colnames(plot.data))]
 ```
  
-```{r plot24, echo=FALSE , fig.width=10, fig.height=8} 
+```{r c9, echo=FALSE , fig.width=10, fig.height=8} 
 par(mar=c(8, 4, 2, 2) + 0.1)  # bottom,left,up,right   
 boxplot(plot.data,col=c("blue","grey" ),xlab="",xaxt="n") 
 axis(1, at=1:ncol(plot.data), labels=colnames(plot.data), las = 2, cex.axis = 0.8) 
@@ -306,7 +306,7 @@ As opposed to Cosinor/extCosinor model, functional principal component analysis 
 
 Notice that, here, for simplicity and better interpretability, for each subject, we take the average across all valid days, therefore, we don't account for the within person correlation. To incorporate the within person correlation, one can choose to use multilevel FPCA by using the `denseFLMM` function in the denseFLMM package.
 
-```{r fpca26,include=FALSE}
+```{r c10fpca,include=FALSE}
 ######################################################### 
 # 2.6 functional principal component analysis: f=1 WD; f=2 WE
 
@@ -395,7 +395,7 @@ write.csv(subject_PCs, file=foutFN("5_denseFLMM_subject_PCs", paste(ftitle[f],st
 
 
 
-```{r lastChunk,echo=FALSE}
+```{r c11,echo=FALSE}
 for (f in 1:2){ 
 if (f==1) Z2<-Z2.save.1  else  Z2<-Z2.save.2
 pervar_sub<-100*Z2$nu[[1]]/sum(Z2$nu[[1]]) 
@@ -430,7 +430,7 @@ legend('topleft',co=1:4,
 
   + QC step: QCnights.feature.alpha = `r QCnights.feature.alpha`, when Nvalid days on mean,sd,WD,WE < `r QCnights.feature.alpha`, the mean featuer will be marked as NA.
 
-```{r faceMask,echo=FALSE}
+```{r c12faceMask,echo=FALSE}
  
 
 # set mean=NA for those features with Nvalid night< 3 or 7.
@@ -500,7 +500,7 @@ return(Fmer8)
  
 
  
-```{r c3AvgWithMask,warning=FALSE,error=FALSE,echo=FALSE}  
+```{r c13AvgWithMask,warning=FALSE,error=FALSE,echo=FALSE}  
 #  Fmer81.N.all=number of good days for each feature 
 #  Fmer4[which(Fmer4[,"wakeup"]-Fmer4[,"sleeponset"] ==0) ,"zeroSleep"]<-1 
 #  Fmer4[,"Nwd_0s"] <-Fmer4[,"Nwd"]*Fmer4[,"zeroSleep"]  # Number of weekdays of zero sleep
@@ -621,7 +621,7 @@ if (f==1) Fmer9.withmissing.weekday<-Fmer9.withmissing else Fmer9.withmissing.we
   
 cleancode2: number of missingness of features of each subject
 
-```{r,echo=F}
+```{r c14,echo=F}
 if (nrow(Fmer9.withmissing.weekday)>=1) kable(Fmer9.withmissing.weekday,caption="N valid night of removed subjects for WD mean features") %>%
     kable_styling(bootstrap_options = c("striped", "hover")) 
 ```
@@ -632,13 +632,13 @@ if (nrow(Fmer9.withmissing.weekday)>=1) kable(Fmer9.withmissing.weekday,caption=
   
 cleancode2: number of missingness of features of each subject
 
-```{r,echo=F} 
+```{r c15,echo=F} 
 if (nrow(Fmer9.withmissing.weekend)>=1) kable(Fmer9.withmissing.weekend,caption="N valid night of removed subjects for WE mean features") %>%
     kable_styling(bootstrap_options = c("striped", "hover")) 
 ```
 
 
-```{r chunk6,echo=FALSE}
+```{r c16,echo=FALSE}
 ansM<-rbind(ans1,ans2) 
 colnames(ansM)<-c("Day","Filename", "Nrow", "Nfiles","Nsubjects")   
 rownames(ansM)<-NULL
@@ -649,7 +649,7 @@ kable(ansM,caption="Description of output files")   %>%
 
 # 4 Plot features
 
-```{r chunk7plot,include=FALSE,warning=FALSE, message=FALSE}
+```{r c17,include=FALSE,warning=FALSE, message=FALSE}
  
 t1<-pheno.plot(inputFN=outFN[1],csv=TRUE, start=4)   
 t2<-pheno.plot(inputFN=outFN[2],csv=TRUE, start=4)    

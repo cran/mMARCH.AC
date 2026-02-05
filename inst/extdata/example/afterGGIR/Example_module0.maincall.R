@@ -33,6 +33,7 @@ mMARCH.AC.shell<-function(mode,filename2id=NULL){
 
 library(mMARCH.AC) 
 packageVersion("mMARCH.AC")
+library(xlsx)
 #  ?mMARCH.AC.maincall  # run help to see all argumengts 
 
 #########################################################################  
@@ -45,7 +46,7 @@ currentdir = "/data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/example/aft
 studyname = "Example"
 bindir = NULL  
 outputdir = "/data/guow4/project0/GGIR/postGGIR/postGGIR_compile/v2/example/GGIR/output_binfile"
-part5FN="WW_L50M125V500_T5A5"   
+part5FN= "WW_L50M100V400_T5A5"  
 QCdays.alpha = 0
 QChours.alpha = 3  
   

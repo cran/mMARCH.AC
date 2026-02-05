@@ -33,8 +33,9 @@ n1440<-60*60*24/epochOut
 sleepFull<-read.csv(sleepFN,header=1,stringsAsFactors=F) 
  
 sleepFull[,"filename"]<- gsub(".RData","",sleepFull[,"filename"]) 
-sleepFull[,"Date"]<- format(as.Date(sleepFull[,"calendar_date"] ), "%Y-%m-%d")  # 3.2.0 change date format
- 
+# sleepFull[,"Date"]<- format(as.Date(sleepFull[,"calendar_date"] ), "%Y-%m-%d")  # 3.2.0 change date format
+sleepFull[,"Date"]<-  NormalizeGGIRDate(sleepFull[,"calendar_date"] ) 
+
 sleepMatrixH<-sleepFull[,c("filename","Date", "daysleeper", "sleeponset","wakeup")] 
 sleepMatrixH[,"oldDate"]<-sleepMatrixH[,"Date"]
 part4ids<-paste(sleepMatrixH[,"filename"],sleepMatrixH[,"Date"],sep=" ") 
@@ -49,9 +50,12 @@ work<-sleepMatrixH[which(sleepMatrixH[,"filename"]==sleepMatrixH[S0[1],"filename
 
 sleepMatrixH[S0,"problem"]<-"duplicate"
 thisday<-sleepMatrixH[S0[1],"Date"]
-if ( as.character(as.Date(thisday )+1) %in% work[,"Date"]  &   as.character(as.Date(thisday )-1) %in% work[,"Date"]) stop("found both yesterday and next day")
-if ( as.character(as.Date(thisday )+1) %in% work[,"Date"]) sleepMatrixH[S0[1],"Date"]<-as.character(as.Date(sleepMatrixH[S0[1],"Date"] )-1)
-if ( as.character(as.Date(thisday )-1) %in% work[,"Date"]) sleepMatrixH[S0[2],"Date"]<-as.character(as.Date(sleepMatrixH[S0[1],"Date"] )+1)
+if ( as.character(as.Date(thisday )+1) %in% work[,"Date"]  &   as.character(as.Date(thisday )-1) %in% work[,"Date"]) { 
+  sleepMatrixH[S0, "Date"] <- NA
+  print("Warning: found both yesterday and next day") } else {
+  if ( as.character(as.Date(thisday )+1) %in% work[,"Date"]) sleepMatrixH[S0[1],"Date"]<-as.character(as.Date(sleepMatrixH[S0[1],"Date"] )-1)
+  if ( as.character(as.Date(thisday )-1) %in% work[,"Date"]) sleepMatrixH[S0[2],"Date"]<-as.character(as.Date(sleepMatrixH[S0[1],"Date"] )+1)
+  }
 } 
 reportSleep.dup<-sleepMatrixH[which(sleepMatrixH[,"filename"] %in% sleepMatrixH[which(part4ids %in% dupID),"filename"]),]
 }  

@@ -68,7 +68,7 @@ setwd(currentdir)
 
  
 
-```{r c1head ,include=FALSE}
+```{r c0head ,include=FALSE}
 #---------------------------------main-body--------------------------------------- 
  
 foutFN<-function(x,studyname) paste("module7a_",studyname,"_new_features_page",x,".csv",sep="")   
@@ -90,7 +90,7 @@ file.copy(from=feaFN, to=dictionary, overwrite = TRUE)
 
 # 1 Read mMARCH.AC new features  
 
-```{r c2}  
+```{r c1}  
 newfea<-read.csv(foutFN("1_features",studyname), header = TRUE,stringsAsFactors=F)
 fpca.day<-read.csv(foutFN("4_denseFLMM_day_PCs",studyname), header = TRUE,stringsAsFactors=F)
 fpca.subject<-read.csv(foutFN("5_denseFLMM_subject_PCs",studyname), header = TRUE,stringsAsFactors=F)
@@ -100,13 +100,14 @@ newfeadata<-merge(newfea,fpca,by=c("filename","Date","newID"),all=TRUE)
 ```
 
 # 2 Read sleep features and other reference features from GGIR summary files
-```{r c3}
+```{r c2}
 data.dir2<-paste(outputdir,"/results",sep="")   
 inFN2<-c("part2_summary",
          "part2_daysummary",
          "part4_summary_sleep_cleaned",
          "part4_nightsummary_sleep_cleaned",
-          paste("part5_",c("personsummary","daysummary"),"_",part5FN,sep="") )  
+          paste("part5_",c("personsummary","daysummary"),"_",part5FN,sep=""),
+         "part6_summary" )   # 7 files
 inFN3<-paste(data.dir2,"/",inFN2,".csv",sep="")  
 sleepFull.fn<-paste(outputdir,"/results/QC/part4_nightsummary_sleep_full.csv",sep="")  
 sleepFull<-read.csv(sleepFull.fn,head=1,stringsAsFactors=F)  
@@ -114,7 +115,8 @@ sleepFull<-read.csv(sleepFull.fn,head=1,stringsAsFactors=F)
 
 # 3 Feature list
 
-```{r c4dict,echo=FALSE}
+ 
+```{r c3dict,echo=FALSE}
 dict<-read.xlsx(dictionary,head=1,sheetName="dictionary",stringsAsFactors=F) 
 dict<-dict[which(!is.na(dict[,"Domain"])),]
 
@@ -123,10 +125,20 @@ PAdomain<-dict[which(dict[,"Domain"]=="PA"),"Variable"]
 CRdomain<-dict[which(dict[,"Domain"]=="CR"),"Variable"] 
 subjectlevel.variable<-dict[which(dict[,"level"]=="subject"),"Variable"] 
 
+#gpart2sub<-read.csv(inFN3[1],head=1,stringsAsFactors=F) # subject not used in 3.3.2
+gpart2day<-read.csv(inFN3[2],head=1,stringsAsFactors=F)    # day-level
+gpart4day<-read.csv(inFN3[4],head=1,stringsAsFactors=F)    # night-level 
+gpart5day<-read.csv(inFN3[6],head=1,stringsAsFactors=F)    # day summary
+gpart6sub<-read.csv(inFN3[7],head=1,stringsAsFactors=F)    # part 6 subject summary
+intersect(colnames(gpart2day),colnames(gpart4day))
+intersect(colnames(gpart2day),colnames(gpart5day))
+intersect(colnames(gpart4day),colnames(gpart5day))
 
-part2variable<-dict[which(dict[,"Source"]=="GGIR-part2"),"Variable"] #9/1 IV and IS
-part4variable<-dict[which(dict[,"Source"]=="GGIR-part4"),"Variable"]
-part5variable<-dict[which(dict[,"Source"]=="GGIR-part5"),"Variable"]
+
+part2variable<-dict[which(dict[,"Source"] %in% c("GGIR-part2","GGIR-part2*")),"Variable"]   #9/1 IV and IS
+part4variable<-dict[which(dict[,"Source"] %in% c("GGIR-part4","GGIR-part4*")),"Variable"]
+part5variable<-dict[which(dict[,"Source"] %in% c("GGIR-part5","GGIR-part5*")),"Variable"]
+part6variable<-dict[which(dict[,"Source"] %in% c("GGIR-part6","GGIR-part6*")),"Variable"]
 partRvariable<-dict[which(dict[,"Source"]=="mMARCH.AC"),"Variable"]
 
 kable(dict[,2:5]) %>%
@@ -135,42 +147,12 @@ kable(dict[,2:5]) %>%
 table(dict[,"Source"])
 ```
 
- 
-```{r c5,include=FALSE}
- 
-##################################################### 
-# 1.1 sleep variables for sleep domain
- 
-gpart2<-read.csv(inFN3[1],head=1,stringsAsFactors=F) # subject
-gpart2day<-read.csv(inFN3[2],head=1,stringsAsFactors=F) # day-level
-gpart4<-read.csv(inFN3[4],head=1,stringsAsFactors=F) # night 
-gpart5<-read.csv(inFN3[6],head=1,stringsAsFactors=F)  # day summary
 
+## 3.1 Fix the issue of duplicate dates in the part5WW file to extract 
  
-# 4/24/2025  check variables in each part; GGIR3.2.0 has different variables.
-setdiff(part2variable,colnames(gpart2))  #"IV_intradailyvariability" "IS_interdailystability"  
-setdiff(part4variable,colnames(gpart4))
-setdiff(part5variable,colnames(gpart5))  # "L5TIME_num"  "M10TIME_num" "L5VALUE"     "M10VALUE"    "RA_ggir" # xxx----   
- 
- 
- 
-colnames(gpart4)
-gpart4[,"sleep_Midpoint"]<-(gpart4[,"sleeponset"]+gpart4[,"wakeup"])/2   
-gpart4[,"sleep_efficiency"]<- gpart4[,"SleepDurationInSpt"]/gpart4[,"SptDuration"]     
-colnames(gpart4)[colnames(gpart4)=="calendar_date"]<- "calendardate"  #6/5/2020
 
+```{r c31, error=F, warning=F,message=F}
 
-
-S0<-which(gpart4[,"sleep_Midpoint"]==0) 
-if (length(S0)>=1) {gpart4[S0,c("wakeup","sleeponset")]
-                    gpart4[S0,"sleep_Midpoint"]<-NA} 
-S1<- c("filename","calendardate",intersect(part4variable,colnames(gpart4))) 
-gpart4.sleep.sel<-gpart4[,S1] 
-gpart4.sleep.sel[,"calendardate"]<- format(as.Date(gpart4.sleep.sel[,"calendardate"] ), "%Y-%m-%d")
-         
-
-##################################################### 
-# 1.2 sleep variables for PA domain
 # adjust part5ww to match and extract features such as N_atleast5minwakenight,ACC_spt_sleep_mg and dur_day_total_IN_min....
 # difficulty: part5mm not right in date, part5ww has duplicate dates. 
 
@@ -207,56 +189,14 @@ return(ans)
 }
 
  
-t<-fixDup(part5ww=gpart5,part4=sleepFull)
-part5data.clean<-t$data   #part5 daysummary
-S2a<-which(part5data.clean[,"cleaningcode"]>=2) #If the study did not propose a sleep log to the individuals, then all nights are removed with cleaningcode higher than 1.
-S2b<-which(colnames(part5data.clean) %in% intersect(part5variable,SLdomain))
-part5data.clean[S2a,S2b]<-NA 
-# colnames(part5data.clean) 
-
-# 4.24.2025 ggir3.2.0 do not output L10 and M10 in part5
-if ("M10VALUE" %in% colnames(part5data.clean) & "L5VALUE" %in% colnames(part5data.clean) ){
-   try(quantile(as.numeric(part5data.clean[,"L10TIME_num"]),na.rm=T))
-   try(quantile(as.numeric(part5data.clean[,"M10TIME_num"]),na.rm=T))
-   try(quantile(as.numeric(part5data.clean[,"dur_day_total_IN_min"]),na.rm=T))
-   colnames(part5data.clean)[colnames(part5data.clean)=="calendar_date"]<- "calendardate"  #6/5/2020 
-   part5data.clean[,"RA_ggir"]<-(part5data.clean[,"M10VALUE"]- part5data.clean[,"L5VALUE"])/
-                                (part5data.clean[,"M10VALUE"]+ part5data.clean[,"L5VALUE"])  
-}
-part5data.clean[,"calendardate"]<- format(as.Date(part5data.clean[,"calendar_date"] ), "%Y-%m-%d") 
-S2<-c("filename","calendardate",intersect(part5variable ,colnames(part5data.clean)),"cleaningcode"   ) 
-part5data.clean.sel<-part5data.clean[,S2] 
-table(part5data.clean.sel[,"cleaningcode"]) 
-
-##################################################### 
-# 1.3 part2_subject level summary  for IS and IV 
-   
-fn6<-paste(data.dir2,"/part6_summary.csv",sep="")  
-if (file.exists(fn6)) { gpart6<-read.csv(fn6,head=1,stringsAsFactors=F)
-                        gpart2and6<-merge(gpart2,gpart6,by="filename") } else  gpart2and6<-gpart2
-S3<-c("filename", intersect(c(part2variable,"IS","IV"),colnames(gpart2and6))   )  #3.2.0 change var name to IS and IV
-gpart2.sub<-gpart2and6[,S3] 
-colnames(gpart2.sub)<-gsub("IV","IV_intradailyvariability",colnames(gpart2.sub))
-colnames(gpart2.sub)<-gsub("IS","IS_interdailystability",colnames(gpart2.sub))
-
-
-
-
-# NO variables in part5 for GGIR3.2.0:  "L5TIME_num"  "M10TIME_num" "L5VALUE"     "M10VALUE"    "RA_ggir"   
-if (length(setdiff(part5variable,colnames(gpart5)))>=1){ 
-   gpart2.day.clean<-data.frame(filename=gpart2day[,"filename"], calendardate= format(as.Date(gpart2day[,"calendar_date"] ), "%Y-%m-%d") ,   
-                                      L5TIME_num=gpart2day[,"L5_ENMO_mg_0.24hr"],         
-                                      L5VALUE=gpart2day[,"L5_ENMO_mg_0.24hr"], 
-                                      M10TIME_num=gpart2day[,"M10hr_ENMO_mg_0.24hr"],
-                                      M10VALUE=gpart2day[,"M10_ENMO_mg_0.24hr"])
-   gpart2.day.clean[,"RA_ggir"]<-(gpart2.day.clean[,"M10VALUE"]- gpart2.day.clean[,"L5VALUE"])/
-                                 (gpart2.day.clean[,"M10VALUE"]+ gpart2.day.clean[,"L5VALUE"])  
-}  
-gpart2.clean<-merge(gpart2.day.clean,gpart2.sub,by="filename",all=TRUE)
-miss<-which(rowSums(is.na(gpart2.clean[,-1]))==ncol(gpart2.clean)-1)
-if (length(miss)>=1) gpart2.clean<-gpart2.clean[-miss,]
-```  
+t<-fixDup(part5ww=gpart5day,part4=sleepFull)
+gpart5.fix<-t$data   #part5 daysummary
+S2a<-which(gpart5.fix[,"cleaningcode"]>=2) #If the study did not propose a sleep log to the individuals, then all nights are removed with cleaningcode higher than 1.
+S2b<-which(colnames(gpart5.fix) %in% intersect(part5variable,SLdomain))
+gpart5.fix[S2a,S2b]<-NA 
  
+ 
+```
  
 **Note 1: `r inFN2[6]` had `r t$N` duplicate days**
 ```{r,echo=F}
@@ -265,6 +205,7 @@ if (t$N>=1) kable(t$note,caption="Duplicate days Correction according to part4")
 
 ```
 # 
+
 **Note 2: Cleaningcode in GGIR part4 and part5; Set sleep feature=NA for Cleaningcode>=2 (freq=`r length(S2a)` nights)**   
  
 To monitor possible problems with the sleep assessment, the variable cleaningcode is recorded for each night. Cleaningcode per night (noon-noon or 6pm-6pm as described above) can have one of the following values:
@@ -286,10 +227,119 @@ Notice that part 4 is focused on sleep research, by which the cleaned reported i
 
    
 
-#
-# 3 Merge all features (mMARCH.AC + GGIR)  
+
+## 3.2 Extract  `r paste(part2variable,collapse=",")`
+
+```{r c32,include=FALSE}
+ 
+##################################################### 
+# 1.1 sleep variables for sleep domain
+#  check variables in each part; GGIR3.2.0 has different variables.
+
+
+setdiff(part2variable,colnames(gpart2day))  #  "IV_intradailyvariability" "IS_interdailystability"  
+setdiff(part4variable,colnames(gpart4day))  #  "sleep_Midpoint"   "sleep_efficiency"
+setdiff(part5variable,colnames(gpart5day))  #   "L5TIME_num"  "M10TIME_num" "L5VALUE"     "M10VALUE"    "RA_ggir" # xxx----   
+setdiff(part6variable,colnames(gpart6sub))  
+ 
+ 
+ExtractVar <- function(variable, data, variable.alias = NULL) {
+  sel <- c("filename", "calendar_date", variable)  # desired column order
+  
+  # keep only columns in sel, and in the same order as sel
+  sel_exist <- sel[sel %in% colnames(data)]
+  
+  datasel <- data[, sel_exist, drop = FALSE]
+  return(datasel)
+}
+
+
+ExtractVar <- function(variable, data, variable.alias = NULL, sleepEff=FALSE) {
+
+  # Possible spellings of calendar_date
+  date_candidates <- c("calendar_date", "calendardate", "calenderdate") 
+  # Find which one exists in data
+  date_col <- date_candidates[date_candidates %in% colnames(data)][1] 
+  if (!is.na(date_col))  {
+        colnames(data)[colnames(data) == date_col] <- "calendar_date"
+        data[,"calendar_date"]<- format(as.Date(data[,"calendar_date"] ), "%Y-%m-%d")
+  }
+  # Desired column order
+  sel <- c("filename", "calendar_date", variable,"cleaningcode" )  
+
+   if (sleepEff) {
+     data[,"sleep_Midpoint"]<-(data[,"sleeponset"]+data[,"wakeup"])/2   
+     data[,"sleep_efficiency"]<- data[,"SleepDurationInSpt"]/data[,"SptDuration"]  
+     S0<-which(data[,"sleep_Midpoint"]==0) 
+     if (length(S0)>=1) data[S0,"sleep_Midpoint"]<-NA  
+     sel <- c("filename", "calendar_date", variable)   #variable includes sleepMid and sleepEff
+     } 
+
+  # Keep only existing columns, in correct order
+  sel_exist <- sel[sel %in% colnames(data)] 
+  datasel <- data[, sel_exist, drop = FALSE]
+   
+  return(datasel)
+}
+
+# Note: NO variables in part5 for GGIR3.2.0:  "L5TIME_num"  "M10TIME_num" "L5VALUE"     "M10VALUE"    "RA_ggir", 3.3.2change to new names in part2  
+ 
+
+ EV2<-ExtractVar(part2variable,gpart2day)  
+ EV2[,"RA_ggir"]<-(EV2[,"M10_ENMO_mg_0.24hr"]- EV2[,"L5_ENMO_mg_0.24hr"])/
+                  (EV2[,"M10_ENMO_mg_0.24hr"]+ EV2[,"L5_ENMO_mg_0.24hr"])   
+ 
+ #remove empty lines without date,L5,.... info
+ S0miss<-which(rowSums(is.na(EV2[,-1]))==ncol(EV2)-1)
+ if (length(S0miss)>=1) EV2<-EV2[-S0miss,]
+
+```  
+ 
+
+## 3.3 Extract  `r paste(part4variable,collapse=",")`
+    
+
+```{r c33,include=FALSE}
+EV4<-ExtractVar(part4variable,gpart4day,sleepEff=TRUE) 
+```
+
+## 3.4 Extract  `r paste(part5variable,collapse=",")`
+    
+```{r c34,include=FALSE}
+#  physical activity variables for PA domain 
+#  4.24.2025   ggir3.2.0 do not output L10 and M10 in part5 anymore
+ 
+
+EV5<-ExtractVar(part5variable,gpart5.fix)  #day level
+ 
+table(EV5[,"cleaningcode"]) 
+```
+
+
+
+## 3.5 Extract  `r paste(part6variable,collapse=",")`
+    
+```{r c35,include=FALSE}
+ 
+# Note: part2_subject level summary  for IS and IV in 2.9.2 before
+# Note: GGIR has IV_intradailyvariability "IS_interdailystability" before, but 3.3.2 use IV and IS now. We would keep the old name since IS and IV are used in our R code as well  
+
+part6variable<-gsub("IV_intradailyvariability","IV", part6variable)
+part6variable<-gsub("IS_interdailystability","IS", part6variable) 
+
+EV6<-ExtractVar(part6variable,gpart6sub) 
+colnames( EV6)<-gsub("IV","IV_intradailyvariability",colnames( EV6))
+colnames( EV6)<-gsub("IS","IS_interdailystability",colnames( EV6))
+ 
+```
+
 
  
+
+#
+# 4 Merge all features (mMARCH.AC + GGIR)  
+
+  Note: "cleaningcode" is from part5day
 
 ```{r c6,results="hide"}
 # d4,d6=bin.RData, d2=.bin
@@ -297,16 +347,14 @@ Notice that part 4 is focused on sleep research, by which the cleaned reported i
 # 1.3  merge all features
 # Dmer=summary file,newfeadata=junrui ouput using clean imputation data only
 
-ggirmer0<-merge(gpart4.sleep.sel,part5data.clean.sel,by=c("filename","calendardate"),all=TRUE)
-ggirmer0[,"filename"]<-gsub(".RData","",ggirmer0[,"filename"])  
-ggirmer<-merge(ggirmer0,gpart2.clean,by=c("filename","calendardate" ),all.x=TRUE,all.y=FALSE)  
-dim(gpart4.sleep.sel)
-dim(part5data.clean.sel)
-dim(ggirmer0) 
-dim(gpart2.clean)
-head(ggirmer)
+ggirmer0<-merge(EV4,EV5,by=c("filename","calendar_date"),all=TRUE) 
+ggirmer<-merge(ggirmer0,EV2,by=c("filename","calendar_date" ),all.x=TRUE,all.y=FALSE)  
+ggirmer<-merge(ggirmer,EV6,by= "filename",all.x=TRUE,all.y=FALSE)   #have duplicate values for subject level features
+setdiff(c(part2variable,part4variable,part5variable,part6variable), colnames(ggirmer))
 
-Fmer<-merge(newfeadata,ggirmer,by.x=c("filename","Date"),by.y=c("filename","calendardate"),all=TRUE)  #final merge
+
+
+Fmer<-merge(newfeadata,ggirmer,by.x=c("filename","Date"),by.y=c("filename","calendar_date"),all=TRUE)  #final merge
        # note some data has newfeadata, but without GGIR data; and vice versa. need further clean.
 dim(newfeadata)
 dim(ggirmer)
@@ -347,13 +395,15 @@ B=A+1 #first column need to average
 MustHaveTAC<-TRUE
 ``` 
  
-# 4 Average variable at the subject level
+# 5 Average variable at the subject level
 
 One thing to note is that a lot of nights have 0 sleep duration - this may be where GGIR has failed to identify the start and end points of the sleep period window during that day. To account for this, I excluded all nights where 'acc_wake' minus 'acc_onset' was zero. This means that individuals might have different numbers of weekday and weekend day measures going into their averages. It's a good idea to keep track of how many 'valid' weekdays and weekend days were included in each person's mean, then adjust any statistical analyses for these covariates.
 
 Here, the values of sleep variables were changed to NA when the nights have 0 sleep duration.
 
 Note, L5TIME and M10TIME will be averaged using circle mean formula provided by get_mean_sd_hour().
+
+## Cleaning for average, change sleep domain to NA for zero hour sleep rows 
 
 ```{r c7,results="hide"}
 Fmer4<-Fmer2
@@ -379,7 +429,7 @@ write.csv(Fmer5, file=outFN[2],   row.names = FALSE )  #clean data
 ```
 
 
-
+## Leave space for later circle mean calculation (L5TIEM_cmean,etc) for mMARCH.AC varialbes 
  
 ```{r c8,results="hide"}
 #0) add duplicate L5TIME,etc column for later circle mean calculation
@@ -391,7 +441,8 @@ Fmer6<-cbind(Fmer5[,c(1:lastC)],timingMatrix,Fmer5[(lastC+1):ncol(Fmer5)])
 
 #..a) Take averages for both subject and day level features although subject feature has same values for all days................
     # note use na.action=na.pass in aggregate, otherwise you will lose rows with NA in other columns
- 
+    # B=5 first column of sleeponset, Ncol8=231,  230=PC10_S
+
 Ncol8<-which(colnames(Fmer6)=="weekday")   # Ncol8 after are weekday,zeroSleep,Nwd,Nwe,..
 Fmer81<-aggregate(.~filename,data=Fmer6[, c(1,B:(Ncol8-1))], mean,na.rm=T,na.action=na.pass) #a1) head - mean features
 Fmer82<-aggregate(.~filename,data=Fmer6[,c(1,Ncol8:ncol(Fmer6))], sum,na.rm=T,na.action=na.pass) #a2) tail - sum for Nwe, Nwd, weekday etc.
@@ -438,7 +489,7 @@ if (nrow(Fmer8.bad)>=1) kable(Fmer8.bad,caption="N valid night of removed subjec
 ```
 
 #
-# 5 SD of each variable at the subject level
+# 6 SD of each variable at the subject level
    sd=0 for day-level features such as amp_L, acro_L, PC1, PC2, ...	 
  
    Note, L5TIME and M10TIME will be averaged using circle mean formula provided by get_mean_sd_hour().
@@ -487,7 +538,7 @@ if (nrow(Fmer9.bad)>=1) kable(Fmer9.bad,caption="N valid night of removed subjec
 ```
 
 #
-# 6 Output
+# 7 Output
 
 ```{r c12,include=FALSE}
 
@@ -526,7 +577,7 @@ kable(ansM,caption="Description of output files")   %>%
   (2) sleep features from part4_clean file, set to be missing when cleaningcode>1 from part5
   (3) dur_PA features are kept from part5 even sleep cleaningcode>1
 
-# 7 Plot features
+# 8 Plot features
 
 ```{r c13,include=FALSE,warning=FALSE, message=FALSE}
  

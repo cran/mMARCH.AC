@@ -135,7 +135,7 @@ nopoly<-colnames(d0)[which(ncat==1)]
  
 sleepC1<-which(colnames(d0)=="sleeponset") #6/5/2020
 paC2<-which(colnames(d0)=="TAC")
-crC3<-which(colnames(d0)=="L5TIME_num")  #ggir first cr variable
+crC3<-min(which(colnames(d0) %in% c("L5TIME_num", "L5hr_ENMO_mg_0.24hr")))  #ggir first cr variable, 3.3.2change to new name
 crC4<-which(colnames(d0)=="zeroSleep")-1  # last CR variable
 S1<-c(sleepC1,paC2,crC3,crC4+1)
 
